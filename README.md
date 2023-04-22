@@ -1,0 +1,3 @@
+# Aomoji Vanity
+
+pretty
