@@ -10,9 +10,7 @@ namespace AomojiVanity.API;
 ///     use tModLoader's singleton loading system for.
 /// </summary>
 internal sealed class StaticLoader : ModSystem {
-    public override void OnModLoad() {
-        base.OnModLoad();
-
+    public StaticLoader() {
         HairLoader.Load();
         ResourcePackLoader.Load();
     }

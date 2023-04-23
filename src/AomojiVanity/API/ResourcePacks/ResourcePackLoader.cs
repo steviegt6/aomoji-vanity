@@ -36,7 +36,7 @@ public static class ResourcePackLoader {
         modResourcePacks = new List<ModResourcePack>();
         dataDict = new ConditionalWeakTable<ResourcePack, ModResourcePackData>();
 
-        IL_ResourcePack.ctor += RegisterResourcePackAsModded;
+        IL_ResourcePack.ctor += SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile += ResourcePackHasModdedFile;
         On_ResourcePack.OpenStream += ResourcePackOpenModdedStream;
         On_ResourcePack.GetContentSource += ResourcePackGetModdedContentSource;
@@ -48,7 +48,7 @@ public static class ResourcePackLoader {
         modResourcePacks = null!;
         dataDict = null!;
 
-        IL_ResourcePack.ctor -= RegisterResourcePackAsModded;
+        IL_ResourcePack.ctor -= SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile -= ResourcePackHasModdedFile;
         On_ResourcePack.OpenStream -= ResourcePackOpenModdedStream;
         On_ResourcePack.GetContentSource -= ResourcePackGetModdedContentSource;
@@ -56,15 +56,15 @@ public static class ResourcePackLoader {
         On_ResourcePackList.FromJson -= FromJsonAddModdedPacks;
     }
 
-    private static void RegisterResourcePackAsModded(ILContext il) {
+    private static void SkipPathSettingForModdedPacks(ILContext il) {
         var c = new ILCursor(il);
         var label = c.DefineLabel();
 
-        c.GotoNext(x => x.MatchStfld<ResourcePack>(nameof(ResourcePack.IsCompressed)));
-        c.GotoPrev(MoveType.Before, x => x.MatchLdarg(0));
+        c.GotoNext(MoveType.After, x => x.MatchThrow());
         c.MarkLabel(label);
 
-        c.GotoPrev(MoveType.Before, x => x.MatchLdarg(2));
+        c.Index = 0;
+        c.GotoNext(MoveType.After, x => x.MatchStfld<ResourcePack>("_needsReload"));
         c.Emit(OpCodes.Ldarg_2);
         c.Emit(OpCodes.Brfalse, label);
     }
