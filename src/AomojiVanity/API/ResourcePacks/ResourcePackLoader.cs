@@ -12,29 +12,14 @@ using Terraria.IO;
 namespace AomojiVanity.API.ResourcePacks;
 
 public static class ResourcePackLoader {
-    private class ModResourcePackData {
-        public bool IsModded { get; set; }
-
-        public IContentSource? ContentSource { get; set; }
-
-        public IContentSource? RootSource { get; set; }
-    }
-
     private static List<ModResourcePack> modResourcePacks = new();
-    private static ConditionalWeakTable<ResourcePack, ModResourcePackData> dataDict = new();
 
     public static void Register(ModResourcePack resourcePack) {
-        var data = dataDict.GetOrCreateValue(resourcePack.Entity);
-        data.IsModded = true;
-        data.ContentSource = resourcePack.MakeContentSource();
-        data.RootSource = resourcePack.MakeRootSource();
-
         modResourcePacks.Add(resourcePack);
     }
 
     internal static void Load() {
         modResourcePacks = new List<ModResourcePack>();
-        dataDict = new ConditionalWeakTable<ResourcePack, ModResourcePackData>();
 
         IL_ResourcePack.ctor += SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile += ResourcePackHasModdedFile;
@@ -46,7 +31,6 @@ public static class ResourcePackLoader {
 
     internal static void Unload() {
         modResourcePacks = null!;
-        dataDict = null!;
 
         IL_ResourcePack.ctor -= SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile -= ResourcePackHasModdedFile;
@@ -70,30 +54,27 @@ public static class ResourcePackLoader {
     }
 
     private static bool ResourcePackHasModdedFile(On_ResourcePack.orig_HasFile orig, ResourcePack self, string fileName) {
-        var data = dataDict.GetOrCreateValue(self);
-        if (!data.IsModded || data.RootSource is null)
+        if (self is not ModResourcePack.ExtendedResourcePack extended || extended.RootSource is null)
             return orig(self, fileName);
 
         // Modded resource packs rely on a provided content source.
-        return data.RootSource.HasAsset(fileName);
+        return extended.RootSource.HasAsset(fileName);
     }
 
     private static Stream ResourcePackOpenModdedStream(On_ResourcePack.orig_OpenStream orig, ResourcePack self, string filename) {
-        var data = dataDict.GetOrCreateValue(self);
-        if (!data.IsModded || data.RootSource is null)
+        if (self is not ModResourcePack.ExtendedResourcePack extended || extended.RootSource is null)
             return orig(self, filename);
 
         // Modded resource packs rely on a provided content source.
-        return data.RootSource.OpenStream(filename);
+        return extended.RootSource.OpenStream(filename);
     }
 
     private static IContentSource ResourcePackGetModdedContentSource(On_ResourcePack.orig_GetContentSource orig, ResourcePack self) {
-        var data = dataDict.GetOrCreateValue(self);
-        if (!data.IsModded || data.ContentSource is null)
+        if (self is not ModResourcePack.ExtendedResourcePack extended || extended.ContentSource is null)
             return orig(self);
 
         // Modded resource packs rely on a provided content source.
-        return data.ContentSource;
+        return extended.ContentSource;
     }
 
     private static ResourcePackList FromJsonAddModdedPacks(On_ResourcePackList.orig_FromJson orig, JArray serializedState, IServiceProvider services, string searchPath) {
