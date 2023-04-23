@@ -57,16 +57,30 @@ public static class ResourcePackLoader {
         if (self is not ModResourcePack.ExtendedResourcePack extended || extended.RootSource is null)
             return orig(self, fileName);
 
+        // Mods package .pngs and .rawimgs. icon.png is special because it's
+        // handled strangely.
+        if (fileName == "icon.png")
+            fileName += ".x";
+        else if (fileName.EndsWith(".png"))
+            fileName = fileName[..^4] + ".rawimg";
+
         // Modded resource packs rely on a provided content source.
         return extended.RootSource.HasAsset(fileName);
     }
 
-    private static Stream ResourcePackOpenModdedStream(On_ResourcePack.orig_OpenStream orig, ResourcePack self, string filename) {
+    private static Stream ResourcePackOpenModdedStream(On_ResourcePack.orig_OpenStream orig, ResourcePack self, string fileName) {
         if (self is not ModResourcePack.ExtendedResourcePack extended || extended.RootSource is null)
-            return orig(self, filename);
+            return orig(self, fileName);
+
+        // Mods package .pngs and .rawimgs. icon.png is special because it's
+        // handled strangely.
+        if (fileName == "icon.png")
+            fileName += ".x";
+        else if (fileName.EndsWith(".png"))
+            fileName = fileName[..^4] + ".rawimg";
 
         // Modded resource packs rely on a provided content source.
-        return extended.RootSource.OpenStream(filename);
+        return extended.RootSource.OpenStream(fileName);
     }
 
     private static IContentSource ResourcePackGetModdedContentSource(On_ResourcePack.orig_GetContentSource orig, ResourcePack self) {
