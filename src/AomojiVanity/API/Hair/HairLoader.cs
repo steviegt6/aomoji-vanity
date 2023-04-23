@@ -81,6 +81,7 @@ public static class HairLoader {
         else {
             Array.Resize(ref TextureAssets.PlayerHair, HairCount);
             Array.Resize(ref TextureAssets.PlayerHairAlt, HairCount);
+            Array.Resize(ref HairID.Sets.DrawBackHair, HairCount);
 
             for (var i = HairID.Count; i < HairCount; i++) {
                 var hair = GetHair(i)!;
