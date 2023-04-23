@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using Newtonsoft.Json.Linq;
 using ReLogic.Content.Sources;
 using Terraria.IO;
 
@@ -13,17 +16,20 @@ public static class ResourcePackLoader {
         public bool IsModded { get; set; }
 
         public IContentSource? ContentSource { get; set; }
-        
+
         public IContentSource? RootSource { get; set; }
     }
 
-    private static ConditionalWeakTable<ResourcePack, ModResourcePackData> dataDict = new ();
+    private static List<ModResourcePack> modResourcePacks = new();
+    private static ConditionalWeakTable<ResourcePack, ModResourcePackData> dataDict = new();
 
     public static void Register(ModResourcePack resourcePack) {
         var data = dataDict.GetOrCreateValue(resourcePack.Entity);
         data.IsModded = true;
         data.ContentSource = resourcePack.MakeContentSource();
         data.RootSource = resourcePack.MakeRootSource();
+
+        modResourcePacks.Add(resourcePack);
     }
 
     internal static void Load() {
@@ -33,6 +39,8 @@ public static class ResourcePackLoader {
         On_ResourcePack.HasFile += ResourcePackHasModdedFile;
         On_ResourcePack.OpenStream += ResourcePackOpenModdedStream;
         On_ResourcePack.GetContentSource += ResourcePackGetModdedContentSource;
+
+        On_ResourcePackList.FromJson += FromJsonAddModdedPacks;
     }
 
     internal static void Unload() {
@@ -42,6 +50,8 @@ public static class ResourcePackLoader {
         On_ResourcePack.HasFile -= ResourcePackHasModdedFile;
         On_ResourcePack.OpenStream -= ResourcePackOpenModdedStream;
         On_ResourcePack.GetContentSource -= ResourcePackGetModdedContentSource;
+
+        On_ResourcePackList.FromJson -= FromJsonAddModdedPacks;
     }
 
     private static void RegisterResourcePackAsModded(ILContext il) {
@@ -74,7 +84,7 @@ public static class ResourcePackLoader {
         // Modded resource packs rely on a provided content source.
         return data.RootSource.OpenStream(filename);
     }
-    
+
     private static IContentSource ResourcePackGetModdedContentSource(On_ResourcePack.orig_GetContentSource orig, ResourcePack self) {
         var data = dataDict.GetOrCreateValue(self);
         if (!data.IsModded || data.ContentSource is null)
@@ -82,5 +92,10 @@ public static class ResourcePackLoader {
 
         // Modded resource packs rely on a provided content source.
         return data.ContentSource;
+    }
+
+    private static ResourcePackList FromJsonAddModdedPacks(On_ResourcePackList.orig_FromJson orig, JArray serializedState, IServiceProvider services, string searchPath) {
+        var list = orig(serializedState, services, searchPath);
+        return new ResourcePackList(list.AllPacks.Concat(modResourcePacks.Select(x => x.Entity)));
     }
 }
