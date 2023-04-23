@@ -33,6 +33,7 @@ public static class ResourcePackLoader {
     }
 
     internal static void Load() {
+        modResourcePacks = new List<ModResourcePack>();
         dataDict = new ConditionalWeakTable<ResourcePack, ModResourcePackData>();
 
         IL_ResourcePack.ctor += RegisterResourcePackAsModded;
@@ -44,6 +45,7 @@ public static class ResourcePackLoader {
     }
 
     internal static void Unload() {
+        modResourcePacks = null!;
         dataDict = null!;
 
         IL_ResourcePack.ctor -= RegisterResourcePackAsModded;
