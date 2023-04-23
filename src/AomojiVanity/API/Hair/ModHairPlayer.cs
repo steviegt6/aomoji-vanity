@@ -4,6 +4,7 @@ using Terraria.ModLoader.IO;
 
 namespace AomojiVanity.API.Hair;
 
+// TODO: Save even when uhh mod is unloaded?
 /// <summary>
 ///     Saves and loads hair data for a player.
 /// </summary>

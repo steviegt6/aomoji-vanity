@@ -13,7 +13,7 @@ internal sealed class HairAutoloader : ModSystem {
         public override Asset<Texture2D> HairTexture => ModContent.Request<Texture2D>(root + key);
 
         public override Asset<Texture2D> HairAltTexture => ModContent.Request<Texture2D>(root + key + "Alt");
-        
+
         private readonly string key;
 
         public AutoloadedHair(string key) {
@@ -22,7 +22,7 @@ internal sealed class HairAutoloader : ModSystem {
     }
 
     private const string root = "AomojiVanity/Assets/Hair/";
-    private readonly string[] keys = { "Test", };
+    private readonly string[] keys = { "Kobayashi", "Ryo" };
 
     public override void OnModLoad() {
         base.OnModLoad();
