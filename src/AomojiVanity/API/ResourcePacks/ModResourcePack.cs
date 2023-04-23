@@ -29,11 +29,11 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
 
     protected abstract string RootPath { get; }
 
-    public virtual IContentSource MakeContentSource() {
+    protected virtual IContentSource MakeContentSource() {
         return new NestedContentSource(Mod.RootContentSource, NormalizeAndAppendSeparator(RootPath + "/Content"));
     }
 
-    public virtual IContentSource MakeRootSource() {
+    protected virtual IContentSource MakeRootSource() {
         return new NestedContentSource(Mod.RootContentSource, NormalizeAndAppendSeparator(RootPath));
     }
 
