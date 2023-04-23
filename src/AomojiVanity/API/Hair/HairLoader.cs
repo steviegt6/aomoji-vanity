@@ -53,10 +53,8 @@ public static class HairLoader {
         var isAtCharacterCreation = Main.gameMenu;
 
         foreach (var hair in hairs) {
-            if (hair.IsUnlocked(isAtStylist, isAtCharacterCreation)) {
-                ModContent.GetInstance<AomojiVanity>().Logger.Debug($"Hair {hair.Name} is unlocked.");
+            if (hair.IsUnlocked(isAtStylist, isAtCharacterCreation))
                 self.AvailableHairstyles.Add(hair.Type);
-            }
         }
     }
 
