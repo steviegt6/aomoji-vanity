@@ -47,8 +47,6 @@ public class NestedModResourcePackContentSource : IContentSource {
     }
 
     bool IContentSource.HasAsset(string assetName) {
-        if (assetName.Contains("Player"))
-            ;
         return file.HasFile(GetPathWithExtensionFromFile(ExpandAndSanitizePath(assetName)) ?? assetName);
     }
 
