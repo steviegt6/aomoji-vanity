@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
+using MonoMod.Cil;
 using ReLogic.Content;
+using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 
@@ -26,15 +28,41 @@ public static class HairLoader {
     }
 
     internal static void Load() {
-        playerHairCache = TextureAssets.PlayerHair.ToArray();
-        playerHairAltCache = TextureAssets.PlayerHairAlt.ToArray();
+        if (!Main.dedServ) {
+            playerHairCache = TextureAssets.PlayerHair.ToArray();
+            playerHairAltCache = TextureAssets.PlayerHairAlt.ToArray();
+        }
+
+        On_HairstyleUnlocksHelper.UpdateUnlocks += AddUnlocksForModHairs;
+        On_HairstyleUnlocksHelper.ListWarrantsRemake += AlwaysWarrantsRemake;
     }
 
     internal static void Unload() {
         HairCount = HairID.Count;
+
+        On_HairstyleUnlocksHelper.UpdateUnlocks -= AddUnlocksForModHairs;
+        On_HairstyleUnlocksHelper.ListWarrantsRemake -= AlwaysWarrantsRemake;
+    }
+
+    private static void AddUnlocksForModHairs(On_HairstyleUnlocksHelper.orig_UpdateUnlocks orig, HairstyleUnlocksHelper self) {
+        var isAtStylist = Main.hairWindow && !Main.gameMenu;
+        var isAtCharacterCreation = Main.gameMenu;
+
+        foreach (var hair in hairs) {
+            if (hair.IsUnlocked(isAtStylist, isAtCharacterCreation))
+                self.AvailableHairstyles.Add(hair.Type);
+        }
+    }
+    
+    private static bool AlwaysWarrantsRemake(On_HairstyleUnlocksHelper.orig_ListWarrantsRemake orig, HairstyleUnlocksHelper self) {
+        // TODO: Performance implications...
+        return true;
     }
 
     internal static void ResizeArrays(bool unloading) {
+        if (Main.dedServ)
+            return;
+
         if (unloading) {
             TextureAssets.PlayerHair = playerHairCache;
             TextureAssets.PlayerHairAlt = playerHairAltCache;
@@ -44,7 +72,7 @@ public static class HairLoader {
         else {
             Array.Resize(ref TextureAssets.PlayerHair, HairCount);
             Array.Resize(ref TextureAssets.PlayerHairAlt, HairCount);
-            
+
             for (var i = HairID.Count; i < HairCount; i++) {
                 var hair = GetHair(i)!;
 

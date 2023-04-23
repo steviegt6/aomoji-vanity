@@ -20,6 +20,10 @@ public abstract class ModHair : ModType {
 
     public abstract Asset<Texture2D> HairAltTexture { get; }
 
+    public virtual bool IsUnlocked(bool isAtStylist, bool isAtCharacterCreation) {
+        return true;
+    }
+
     protected sealed override void Register() {
         HairLoader.Register(this);
         ModTypeLookup<ModHair>.Register(this);
