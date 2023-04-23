@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
-using MonoMod.Cil;
 using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace AomojiVanity.API.Hair;
 
@@ -28,33 +28,42 @@ public static class HairLoader {
     }
 
     internal static void Load() {
+        HairCount = HairID.Count;
+
         if (!Main.dedServ) {
             playerHairCache = TextureAssets.PlayerHair.ToArray();
             playerHairAltCache = TextureAssets.PlayerHairAlt.ToArray();
         }
 
-        On_HairstyleUnlocksHelper.UpdateUnlocks += AddUnlocksForModHairs;
+        On_HairstyleUnlocksHelper.RebuildList += AddUnlocksForModHairs;
         On_HairstyleUnlocksHelper.ListWarrantsRemake += AlwaysWarrantsRemake;
     }
 
     internal static void Unload() {
         HairCount = HairID.Count;
 
-        On_HairstyleUnlocksHelper.UpdateUnlocks -= AddUnlocksForModHairs;
+        On_HairstyleUnlocksHelper.RebuildList -= AddUnlocksForModHairs;
         On_HairstyleUnlocksHelper.ListWarrantsRemake -= AlwaysWarrantsRemake;
     }
 
-    private static void AddUnlocksForModHairs(On_HairstyleUnlocksHelper.orig_UpdateUnlocks orig, HairstyleUnlocksHelper self) {
+    private static void AddUnlocksForModHairs(On_HairstyleUnlocksHelper.orig_RebuildList orig, HairstyleUnlocksHelper self) {
+        orig(self);
+
         var isAtStylist = Main.hairWindow && !Main.gameMenu;
         var isAtCharacterCreation = Main.gameMenu;
 
         foreach (var hair in hairs) {
-            if (hair.IsUnlocked(isAtStylist, isAtCharacterCreation))
+            if (hair.IsUnlocked(isAtStylist, isAtCharacterCreation)) {
+                ModContent.GetInstance<AomojiVanity>().Logger.Debug($"Hair {hair.Name} is unlocked.");
                 self.AvailableHairstyles.Add(hair.Type);
+            }
         }
     }
-    
+
     private static bool AlwaysWarrantsRemake(On_HairstyleUnlocksHelper.orig_ListWarrantsRemake orig, HairstyleUnlocksHelper self) {
+        // We need to update conditions still.
+        orig(self);
+
         // TODO: Performance implications...
         return true;
     }
@@ -79,6 +88,8 @@ public static class HairLoader {
                 TextureAssets.PlayerHair[i] = hair.HairTexture;
                 TextureAssets.PlayerHairAlt[i] = hair.HairAltTexture;
             }
+
+            Main.Hairstyles.UpdateUnlocks();
         }
     }
 }
