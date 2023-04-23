@@ -10,14 +10,14 @@ namespace AomojiVanity.Content.Hair;
 /// </summary>
 internal sealed class HairAutoloader : ModSystem {
     private class AutoloadedHair : ModHair {
-        public override Asset<Texture2D> HairTexture => ModContent.Request<Texture2D>(root + key);
+        public override string Name { get; }
 
-        public override Asset<Texture2D> HairAltTexture => ModContent.Request<Texture2D>(root + key + "Alt");
+        public override Asset<Texture2D> HairTexture => ModContent.Request<Texture2D>(root + Name);
 
-        private readonly string key;
+        public override Asset<Texture2D> HairAltTexture => ModContent.Request<Texture2D>(root + Name + "Alt");
 
         public AutoloadedHair(string key) {
-            this.key = key;
+            Name = key;
         }
     }
 
