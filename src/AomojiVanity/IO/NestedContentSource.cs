@@ -9,6 +9,8 @@ namespace AomojiVanity.IO;
 /// <summary>
 ///     A wrapper around an <see cref="IContentSource"/> instance for nested
 ///     paths.
+///     <br />
+///     Also adds support for arbitrary extensions.
 /// </summary>
 public class NestedContentSource : IContentSource {
     IContentValidator IContentSource.ContentValidator {
@@ -20,10 +22,12 @@ public class NestedContentSource : IContentSource {
     
     private readonly IContentSource source;
     private readonly string path;
+    private readonly bool arbitraryExtensions;
     
-    public NestedContentSource(IContentSource source, string path) {
+    public NestedContentSource(IContentSource source, string path, bool arbitraryExtensions) {
         this.source = source;
         this.path = path;
+        this.arbitraryExtensions = arbitraryExtensions;
     }
     
     IEnumerable<string> IContentSource.EnumerateAssets() {
@@ -31,7 +35,7 @@ public class NestedContentSource : IContentSource {
     }
 
     string IContentSource.GetExtension(string assetName) {
-        return source.GetExtension(path + assetName);
+        return arbitraryExtensions ? Path.GetExtension(assetName) : source.GetExtension(path + assetName);
     }
 
     Stream IContentSource.OpenStream(string fullAssetName) {

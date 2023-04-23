@@ -32,11 +32,11 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     protected abstract string RootPath { get; }
 
     protected virtual IContentSource MakeContentSource() {
-        return new NestedContentSource(Mod.RootContentSource, NormalizeAndAppendSeparator(RootPath + "/Content"));
+        return new NestedContentSource(Mod.RootContentSource, NormalizeAndAppendSeparator(RootPath + "/Content"), true);
     }
 
     protected virtual IContentSource MakeRootSource() {
-        return new NestedContentSource(Mod.RootContentSource, NormalizeAndAppendSeparator(RootPath));
+        return new NestedContentSource(Mod.RootContentSource, NormalizeAndAppendSeparator(RootPath), true);
     }
 
     private static string NormalizeAndAppendSeparator(string path) {
