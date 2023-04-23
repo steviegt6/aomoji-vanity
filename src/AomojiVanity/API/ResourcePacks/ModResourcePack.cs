@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using AomojiVanity.IO;
 using ReLogic.Content.Sources;
 using Terraria;
@@ -21,10 +22,11 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     }
 
     protected override ResourcePack CreateTemplateEntity() {
-        return new ExtendedResourcePack {
-            ContentSource = MakeContentSource(),
-            RootSource = MakeRootSource(),
-        };
+        var pack = (ExtendedResourcePack) FormatterServices.GetUninitializedObject(typeof(ExtendedResourcePack));
+        pack.ContentSource = MakeContentSource();
+        pack.RootSource = MakeRootSource();
+        typeof(ExtendedResourcePack).GetConstructor(Type.EmptyTypes)!.Invoke(pack, null);
+        return pack;
     }
 
     protected abstract string RootPath { get; }
