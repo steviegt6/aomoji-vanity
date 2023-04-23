@@ -1,5 +1,6 @@
 ﻿using AomojiVanity.API.Hair;
 using AomojiVanity.API.Hijacking;
+using AomojiVanity.API.ResourcePacks;
 using Terraria.ModLoader;
 
 namespace AomojiVanity.API;
@@ -13,6 +14,7 @@ internal sealed class StaticLoader : ModSystem {
         base.OnModLoad();
 
         HairLoader.Load();
+        ResourcePackLoader.Load();
     }
 
     public override void SetupContent() {
@@ -28,5 +30,6 @@ internal sealed class StaticLoader : ModSystem {
 
         HairLoader.Unload();
         ModHijackLoader.Unload();
+        ResourcePackLoader.Unload();
     }
 }

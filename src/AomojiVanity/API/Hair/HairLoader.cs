@@ -6,7 +6,6 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace AomojiVanity.API.Hair;
 
