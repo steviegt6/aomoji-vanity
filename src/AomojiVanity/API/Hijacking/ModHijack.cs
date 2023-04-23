@@ -1,17 +1,23 @@
 ﻿using System.Collections.Generic;
 using Terraria.ModLoader;
 
-namespace AomojiVanity.API.ModHijack;
+namespace AomojiVanity.API.Hijacking;
 
 /// <summary>
-///     Provides an interface for redirecting <see cref="Mod.Call"/> invocations
-///     of external mods.
+///     Redirects <see cref="Mod.Call"/> invocations of external mods.
 /// </summary>
-internal interface IModHijacker {
+internal abstract class ModHijack : ModType {
+#region Impl
+    protected sealed override void Register() {
+        ModHijackLoader.Register(this);
+        ModTypeLookup<ModHijack>.Register(this);
+    }
+#endregion
+
     /// <summary>
     ///     Gets the mods that this hijacker will hijack.
     /// </summary>
-    IEnumerable<string> HijackTargets { get; }
+    public abstract IEnumerable<Mod> HijackTargets { get; }
 
     /// <summary>
     ///     Hijacks a call to <see cref="Mod.Call"/>.
@@ -24,5 +30,5 @@ internal interface IModHijacker {
     ///     A <see cref="HijackResult"/> that indicates whether the call was
     ///     hijacked and the result of the hijack.
     /// </returns>
-    HijackResult HijackCall(Mod mod, params object?[]? args);
+    public abstract HijackResult HijackCall(Mod mod, params object?[]? args);
 }
