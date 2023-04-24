@@ -1,5 +1,4 @@
-﻿using AomojiVanity.API.Hair;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
 
@@ -12,22 +11,27 @@ internal sealed class HairAutoloader : ModSystem {
     private class AutoloadedHair : ModHair {
         public override string Name { get; }
 
-        public override Asset<Texture2D> HairTexture => ModContent.Request<Texture2D>(root + Name);
+        public override string Texture => "AomojiVanity/Assets/Hair/" + Name;
 
-        public override Asset<Texture2D> HairAltTexture => ModContent.Request<Texture2D>(root + Name + "Alt");
+        public override bool IsMale { get; }
 
-        public AutoloadedHair(string key) {
+        public AutoloadedHair(string key, bool isMale) {
             Name = key;
+            IsMale = isMale;
         }
     }
 
     private const string root = "AomojiVanity/Assets/Hair/";
-    private readonly string[] keys = { "Kobayashi", "Ryo" };
+    private readonly string[] female_keys = { "Kobayashi", "Ryo" };
+    private readonly string[] male_keys = { };
 
     public override void OnModLoad() {
         base.OnModLoad();
 
-        foreach (var key in keys)
-            Mod.AddContent(new AutoloadedHair(key));
+        foreach (var key in female_keys)
+            Mod.AddContent(new AutoloadedHair(key, false));
+
+        foreach (var key in male_keys)
+            Mod.AddContent(new AutoloadedHair(key, true));
     }
 }
