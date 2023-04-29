@@ -13,25 +13,29 @@ internal sealed class HairAutoloader : ModSystem {
 
         public override string Texture => "AomojiVanity/Assets/Hair/" + Name;
 
-        public override bool IsMale { get; }
+        public override Gender RandomizedCharacterCreationGender { get; }
 
-        public AutoloadedHair(string key, bool isMale) {
+        public AutoloadedHair(string key, Gender gender) {
             Name = key;
-            IsMale = isMale;
+            RandomizedCharacterCreationGender = gender;
         }
     }
 
     private const string root = "AomojiVanity/Assets/Hair/";
-    private readonly string[] female_keys = { "Kobayashi", "Ryo" };
+    private readonly string[] unspecified_keys = { };
     private readonly string[] male_keys = { };
+    private readonly string[] female_keys = { "Kobayashi", "Ryo" };
 
     public override void OnModLoad() {
         base.OnModLoad();
 
-        foreach (var key in female_keys)
-            Mod.AddContent(new AutoloadedHair(key, false));
+        foreach (var key in unspecified_keys)
+            Mod.AddContent(new AutoloadedHair(key, Gender.Unspecified));
 
         foreach (var key in male_keys)
-            Mod.AddContent(new AutoloadedHair(key, true));
+            Mod.AddContent(new AutoloadedHair(key, Gender.Male));
+
+        foreach (var key in female_keys)
+            Mod.AddContent(new AutoloadedHair(key, Gender.Female));
     }
 }
