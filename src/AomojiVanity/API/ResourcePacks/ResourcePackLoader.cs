@@ -2,16 +2,28 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Newtonsoft.Json.Linq;
 using ReLogic.Content.Sources;
 using Terraria.IO;
+using Terraria.ModLoader;
 
 namespace AomojiVanity.API.ResourcePacks;
 
 public static class ResourcePackLoader {
+    private sealed class LoaderSystem : ModSystem {
+        public LoaderSystem() {
+            ResourcePackLoader.Load();
+        }
+
+        public override void OnModUnload() {
+            base.OnModUnload();
+
+            ResourcePackLoader.Unload();
+        }
+    }
+
     private static List<ModResourcePack> modResourcePacks = new();
 
     public static void Register(ModResourcePack resourcePack) {
@@ -32,12 +44,12 @@ public static class ResourcePackLoader {
     internal static void Unload() {
         modResourcePacks = null!;
 
-        IL_ResourcePack.ctor -= SkipPathSettingForModdedPacks;
+        /*IL_ResourcePack.ctor -= SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile -= ResourcePackHasModdedFile;
         On_ResourcePack.OpenStream -= ResourcePackOpenModdedStream;
         On_ResourcePack.GetContentSource -= ResourcePackGetModdedContentSource;
 
-        On_ResourcePackList.FromJson -= FromJsonAddModdedPacks;
+        On_ResourcePackList.FromJson -= FromJsonAddModdedPacks;*/
     }
 
     private static void SkipPathSettingForModdedPacks(ILContext il) {

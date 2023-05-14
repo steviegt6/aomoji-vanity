@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using AomojiVanity.IO;
 using AomojiVanity.IO.ContentSources;
 using ReLogic.Content.Sources;
 using Terraria;
