@@ -8,23 +8,28 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 
-namespace AomojiVanity.IO;
+namespace AomojiVanity.IO.ContentSources;
 
-public class NestedModResourcePackContentSource : IContentSource {
+/// <summary>
+///     An <see cref="IContentSource"/> implementation that uses a
+///     <see cref="TmodFile"/> as it source, and supports a root path which is
+///     prepended to all asset requests.
+/// </summary>
+public class ModFileContentSourceWithRoot : IContentSource {
     IContentValidator IContentSource.ContentValidator { get; set; } = VanillaContentValidator.Instance;
 
     RejectedAssetCollection IContentSource.Rejections { get; } = new();
 
     private readonly TmodFile file;
-    private readonly string path;
+    private readonly string root;
 
-    public NestedModResourcePackContentSource(Mod mod, string path) {
+    public ModFileContentSourceWithRoot(Mod mod, string root) {
         file = (TmodFile) typeof(Mod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(mod)!;
-        this.path = path;
+        this.root = root;
     }
 
     private string ExpandAndSanitizePath(string assetPath) {
-        return path + assetPath.Replace('\\', '/');
+        return root + assetPath.Replace('\\', '/');
     }
 
     private string? GetPathWithExtensionFromFile(string assetPath) {
@@ -35,7 +40,7 @@ public class NestedModResourcePackContentSource : IContentSource {
     }
 
     public IEnumerable<string> EnumerateAssets() {
-        return file.GetFileNames().Where(asset => asset.StartsWith(path)).Select(asset => Path.GetFileNameWithoutExtension(asset[path.Length..]));
+        return file.GetFileNames().Where(asset => asset.StartsWith(root)).Select(asset => Path.GetFileNameWithoutExtension(asset[root.Length..]));
     }
 
     string? IContentSource.GetExtension(string assetName) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using AomojiVanity.IO;
+using AomojiVanity.IO.ContentSources;
 using ReLogic.Content.Sources;
 using Terraria;
 using Terraria.IO;
@@ -32,11 +33,11 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     protected abstract string RootPath { get; }
 
     protected virtual IContentSource MakeContentSource() {
-        return new NestedModResourcePackContentSource(Mod, NormalizeAndAppendSeparator(RootPath + "/Content"));
+        return new ModFileContentSourceWithRoot(Mod, NormalizeAndAppendSeparator(RootPath + "/Content"));
     }
 
     protected virtual IContentSource MakeRootSource() {
-        return new NestedModResourcePackContentSource(Mod, NormalizeAndAppendSeparator(RootPath));
+        return new ModFileContentSourceWithRoot(Mod, NormalizeAndAppendSeparator(RootPath));
     }
 
     private static string NormalizeAndAppendSeparator(string path) {
