@@ -15,21 +15,23 @@ namespace AomojiVanity.IO.ContentSources;
 ///     <see cref="TmodFile"/> as it source, and supports a root path which is
 ///     prepended to all asset requests.
 /// </summary>
-public class ModFileContentSourceWithRoot : IContentSource {
+public class ModFileContentSourceWithRoot : IContentSource,
+                                            IHasRoot {
     IContentValidator IContentSource.ContentValidator { get; set; } = VanillaContentValidator.Instance;
 
     RejectedAssetCollection IContentSource.Rejections { get; } = new();
 
+    public string Root { get; set; }
+
     private readonly TmodFile file;
-    private readonly string root;
 
     public ModFileContentSourceWithRoot(Mod mod, string root) {
         file = (TmodFile) typeof(Mod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(mod)!;
-        this.root = root;
+        Root = root;
     }
 
     private string ExpandAndSanitizePath(string assetPath) {
-        return root + assetPath.Replace('\\', '/');
+        return Root + assetPath.Replace('\\', '/');
     }
 
     private string? GetPathWithExtensionFromFile(string assetPath) {
@@ -40,7 +42,7 @@ public class ModFileContentSourceWithRoot : IContentSource {
     }
 
     public IEnumerable<string> EnumerateAssets() {
-        return file.GetFileNames().Where(asset => asset.StartsWith(root)).Select(asset => Path.GetFileNameWithoutExtension(asset[root.Length..]));
+        return file.GetFileNames().Where(asset => asset.StartsWith(Root)).Select(asset => Path.GetFileNameWithoutExtension(asset[Root.Length..]));
     }
 
     string? IContentSource.GetExtension(string assetName) {
