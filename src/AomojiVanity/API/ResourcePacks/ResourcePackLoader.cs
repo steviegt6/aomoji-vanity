@@ -66,7 +66,7 @@ public static class ResourcePackLoader {
     }
 
     private static bool ResourcePackHasModdedFile(On_ResourcePack.orig_HasFile orig, ResourcePack self, string fileName) {
-        if (self is not ModResourcePack.ExtendedResourcePack extended || extended.RootSource is null)
+        if (self is not ContentSourceResourcePack extended || extended.RootSource is null)
             return orig(self, fileName);
 
         // Modded resource packs rely on a provided content source.
@@ -74,7 +74,7 @@ public static class ResourcePackLoader {
     }
 
     private static Stream ResourcePackOpenModdedStream(On_ResourcePack.orig_OpenStream orig, ResourcePack self, string fileName) {
-        if (self is not ModResourcePack.ExtendedResourcePack extended || extended.RootSource is null)
+        if (self is not ContentSourceResourcePack extended || extended.RootSource is null)
             return orig(self, fileName);
 
         // Modded resource packs rely on a provided content source.
@@ -82,7 +82,7 @@ public static class ResourcePackLoader {
     }
 
     private static IContentSource ResourcePackGetModdedContentSource(On_ResourcePack.orig_GetContentSource orig, ResourcePack self) {
-        if (self is not ModResourcePack.ExtendedResourcePack extended || extended.ContentSource is null)
+        if (self is not ContentSourceResourcePack extended || extended.ContentSource is null)
             return orig(self);
 
         // Modded resource packs rely on a provided content source.

@@ -1,40 +1,55 @@
-﻿using System;
-using System.Runtime.Serialization;
-using AomojiVanity.IO.ContentSources;
+﻿using AomojiVanity.IO.ContentSources;
+using AomojiVanity.IO.Serialization;
 using ReLogic.Content.Sources;
-using Terraria;
 using Terraria.IO;
 using Terraria.ModLoader;
 
 namespace AomojiVanity.API.ResourcePacks;
 
+/// <summary>
+///     A modded resource pack. That is, a resource pack provided directly by
+///     a mod.
+/// </summary>
 public abstract class ModResourcePack : ModType<ResourcePack> {
-    internal class ExtendedResourcePack : ResourcePack {
-        public IContentSource? ContentSource { get; set; }
-
-        public IContentSource? RootSource { get; set; }
-
-        public ExtendedResourcePack() : base(Main.instance.Services, null) { }
-    }
-
+#region ModType Impl
     protected sealed override void Register() {
         ResourcePackLoader.Register(this);
     }
 
     protected override ResourcePack CreateTemplateEntity() {
-        var pack = (ExtendedResourcePack) FormatterServices.GetUninitializedObject(typeof(ExtendedResourcePack));
+        // Get an uninitialized (unconstructed) instance of
+        // ContentSourceResourcePack so we can set properties prior to actually
+        // calling the constructor. The constructor invokes a method that
+        // requires these properties to be set (defined in vanilla code that we
+        // edit) so we have to do this.
+        var pack = FormatterUtilities.GetUninitializedObject<ContentSourceResourcePack>();
         pack.ContentSource = MakeContentSource();
         pack.RootSource = MakeRootSource();
-        typeof(ExtendedResourcePack).GetConstructor(Type.EmptyTypes)!.Invoke(pack, null);
+        pack.InitializeObject(); // Invokes `.ctor()` (parameterless).
+
         return pack;
     }
+#endregion
 
+    /// <summary>
+    ///     The root path of this resource pack. This is the path that is used
+    ///     as a root for resource resolution.
+    /// </summary>
     protected abstract string RootPath { get; }
 
+    /// <summary>
+    ///     Creates the <see cref="IContentSource"/> used for getting resources.
+    /// </summary>
+    /// <returns>TODO</returns>
     protected virtual IContentSource MakeContentSource() {
         return new ModFileContentSourceWithRoot(Mod, NormalizeAndAppendSeparator(RootPath + "/Content"));
     }
 
+    /// <summary>
+    ///     Creates the <see cref="IContentSource"/> used for getting meta
+    ///     resources.
+    /// </summary>
+    /// <returns>TODO</returns>
     protected virtual IContentSource MakeRootSource() {
         return new ModFileContentSourceWithRoot(Mod, NormalizeAndAppendSeparator(RootPath));
     }
