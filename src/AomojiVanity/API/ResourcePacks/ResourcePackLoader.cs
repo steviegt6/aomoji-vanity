@@ -57,6 +57,8 @@ public static class ResourcePackLoader {
 
         On_UIResourcePackSelectionMenu.CreatePackToggleButton += OverrideOnLeftClickWhenForceEnabled;
         On_UIResourcePackSelectionMenu.DisablePackUpdate += ShowForceEnabledTooltip;
+
+        On_UIResourcePack.DrawSelf += DrawModdedIcon;
     }
 
     internal static void Unload() {
@@ -176,5 +178,16 @@ public static class ResourcePackLoader {
 
         var textValue = Language.GetTextValue(textKey);
         Main.instance.MouseText(textValue, 0, 0);
+    }
+
+    private static void DrawModdedIcon(On_UIResourcePack.orig_DrawSelf orig, UIResourcePack self, SpriteBatch spriteBatch) {
+        orig(self, spriteBatch);
+
+        if (self.ResourcePack is not ContentSourceResourcePack extended)
+            return;
+
+        var dimensions = self.GetDimensions();
+        var asset = ModContent.Request<Texture2D>("AomojiVanity/Assets/UI/ModdedResourcePackIcon").Value;
+        spriteBatch.Draw(asset, new Vector2(dimensions.X + dimensions.Width - asset.Width - 3f, dimensions.Y + 2f), asset.Frame(), Color.White);
     }
 }
