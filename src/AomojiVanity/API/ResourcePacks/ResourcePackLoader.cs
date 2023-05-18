@@ -39,13 +39,18 @@ public static class ResourcePackLoader {
     }
 
     private static List<ModResourcePack> modResourcePacks = new();
+    private static Dictionary<string, bool> modResourcePacksEnabled = new();
 
     public static void Register(ModResourcePack resourcePack) {
         modResourcePacks.Add(resourcePack);
+
+        if (!resourcePack.ForceEnabled)
+            resourcePack.Entity.IsEnabled = modResourcePacksEnabled.TryGetValue(resourcePack.Name, out var enabled) ? enabled : resourcePack.Entity.IsEnabled;
     }
 
     internal static void Load() {
         modResourcePacks = new List<ModResourcePack>();
+        modResourcePacksEnabled = Main.Configuration.Get("AomojiVanity:ResourcePacks", new Dictionary<string, bool>());
 
         IL_ResourcePack.ctor += SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile += ResourcePackHasModdedFile;
@@ -62,7 +67,10 @@ public static class ResourcePackLoader {
     }
 
     internal static void Unload() {
+        Main.Configuration.Put("AomojiVanity:ResourcePacks", modResourcePacks.ToDictionary(x => x.Name, x => x.Entity.IsEnabled));
+
         modResourcePacks = null!;
+        modResourcePacksEnabled = null!;
     }
 
     private static void SkipPathSettingForModdedPacks(ILContext il) {
