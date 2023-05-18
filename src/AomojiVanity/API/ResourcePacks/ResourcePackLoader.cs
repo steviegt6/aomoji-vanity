@@ -18,6 +18,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -55,6 +56,7 @@ public static class ResourcePackLoader {
         On_ResourcePackList.FromJson += FromJsonAddModdedPacks;
 
         On_UIResourcePackSelectionMenu.CreatePackToggleButton += OverrideOnLeftClickWhenForceEnabled;
+        On_UIResourcePackSelectionMenu.DisablePackUpdate += ShowForceEnabledTooltip;
     }
 
     internal static void Unload() {
@@ -149,5 +151,30 @@ public static class ResourcePackLoader {
         };
 
         return button;
+    }
+
+    private static void ShowForceEnabledTooltip(On_UIResourcePackSelectionMenu.orig_DisablePackUpdate orig, UIResourcePackSelectionMenu self, UIElement affectedElement) {
+        if (affectedElement is not GroupOptionButton<bool> { OptionValue: true } button) {
+            orig(self, affectedElement);
+            return;
+        }
+
+        var overridePickedColor = button.GetType().GetField("_overridePickedColor", BindingFlags.NonPublic | BindingFlags.Instance);
+        var value = (Color?) overridePickedColor?.GetValue(button) ?? default;
+
+        if (value != Color.Gray) {
+            orig(self, affectedElement);
+            return;
+        }
+
+        DisplayMouseTextIfHovered(affectedElement, "Mods.AomojiVanity.UI.ResourcePacks.ForceEnabled");
+    }
+
+    private static void DisplayMouseTextIfHovered(UIElement affectedElement, string textKey) {
+        if (!affectedElement.IsMouseHovering)
+            return;
+
+        var textValue = Language.GetTextValue(textKey);
+        Main.instance.MouseText(textValue, 0, 0);
     }
 }

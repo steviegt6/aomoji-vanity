@@ -1,0 +1,9 @@
+Mods: {
+    AomojiVanity: {
+        UI: {
+            ResourcePacks: {
+                ForceEnabled: Forcefully enabled
+            }
+        }
+    }
+}
