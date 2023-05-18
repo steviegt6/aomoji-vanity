@@ -25,8 +25,9 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
         var pack = FormatterUtilities.GetUninitializedObject<ContentSourceResourcePack>();
         pack.ContentSource = MakeContentSource();
         pack.RootSource = MakeRootSource();
+        pack.ModResourcePack = this;
         pack.InitializeObject(); // Invokes `.ctor()` (parameterless).
-        pack.IsEnabled = DefaultEnableState;
+        pack.IsEnabled = DefaultEnableState || ForceEnabled;
 
         return pack;
     }
@@ -42,6 +43,12 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     ///     The default enabled/disabled state of this resource pack.
     /// </summary>
     public virtual bool DefaultEnableState => false;
+
+    /// <summary>
+    ///     Whether to force this resource pack to always be enabled. Use
+    ///     appropriately; don't be invasive.
+    /// </summary>
+    public virtual bool ForceEnabled => false;
 
     /// <summary>
     ///     Creates the <see cref="IContentSource"/> used for getting resources.

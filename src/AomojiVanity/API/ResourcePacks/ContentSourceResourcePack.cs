@@ -6,7 +6,8 @@ namespace AomojiVanity.API.ResourcePacks;
 
 /// <summary>
 ///     A <see cref="ResourcePack"/> which uses <see cref="IContentSource"/>s
-///     to load content.
+///     to load content. Also contains a reference to a source
+///     <see cref="ModResourcePack"/>.
 /// </summary>
 /// <remarks>
 ///     Due to the nature of <see cref="ResourcePack"/>, hardcoded patches have
@@ -26,6 +27,12 @@ public class ContentSourceResourcePack : ResourcePack {
     ///     files, such as <c>pack.json</c> and <c>icon.png</c>.
     /// </summary>
     public IContentSource? RootSource { get; set; }
+    
+    /// <summary>
+    ///     The <see cref="ModResourcePack"/> that this resource pack is
+    ///     associated with.
+    /// </summary>
+    public ModResourcePack? ModResourcePack { get; set; }
 
     /// <summary>
     ///     Constructs a new instance of <see cref="ContentSourceResourcePack"/>
