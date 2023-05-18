@@ -36,7 +36,7 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     ///     The root path of this resource pack. This is the path that is used
     ///     as a root for resource resolution.
     /// </summary>
-    protected abstract string RootPath { get; }
+    public abstract string RootPath { get; }
 
     /// <summary>
     ///     The default enabled/disabled state of this resource pack.
@@ -47,7 +47,7 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     ///     Creates the <see cref="IContentSource"/> used for getting resources.
     /// </summary>
     /// <returns>TODO</returns>
-    protected virtual IContentSource MakeContentSource() {
+    public virtual IContentSource MakeContentSource() {
         return new ModFileContentSourceWithRoot(Mod, NormalizeAndAppendSeparator(RootPath + "/Content"));
     }
 
@@ -56,7 +56,7 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     ///     resources.
     /// </summary>
     /// <returns>TODO</returns>
-    protected virtual IContentSource MakeRootSource() {
+    public virtual IContentSource MakeRootSource() {
         return new ModFileContentSourceWithRoot(Mod, NormalizeAndAppendSeparator(RootPath));
     }
 
