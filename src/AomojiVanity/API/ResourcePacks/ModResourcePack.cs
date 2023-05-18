@@ -26,6 +26,7 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
         pack.ContentSource = MakeContentSource();
         pack.RootSource = MakeRootSource();
         pack.InitializeObject(); // Invokes `.ctor()` (parameterless).
+        pack.IsEnabled = DefaultEnableState;
 
         return pack;
     }
@@ -36,6 +37,11 @@ public abstract class ModResourcePack : ModType<ResourcePack> {
     ///     as a root for resource resolution.
     /// </summary>
     protected abstract string RootPath { get; }
+
+    /// <summary>
+    ///     The default enabled/disabled state of this resource pack.
+    /// </summary>
+    public virtual bool DefaultEnableState => false;
 
     /// <summary>
     ///     Creates the <see cref="IContentSource"/> used for getting resources.
