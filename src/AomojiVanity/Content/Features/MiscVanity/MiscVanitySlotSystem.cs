@@ -1,5 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ModLoader;
@@ -8,6 +11,8 @@ using Terraria.UI;
 namespace AomojiVanity.Content.Features.MiscVanity;
 
 public sealed class MiscVanitySlotSystem : ModSystem {
+    private static bool drawMountDust = true;
+    
     public override void Load() {
         base.Load();
 
@@ -16,6 +21,14 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         // really care? It's kind of a hassle and I want to ensure these are
         // drawn as close to the inventory as possible. Sorry, not sorry.
         On_Main.DrawInventory += DrawMiscVanitySlots;
+
+        On_Mount.Draw += DrawVanityMount;
+        On_Mount.DoSpawnDust += OverrideSpawnDust;
+    }
+
+    private static void OverrideSpawnDust(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
+        if (drawMountDust)
+            orig(self, mountedPlayer, isDismounting);
     }
 
     // TODO: Mostly ripped from vanilla; clean this up?
@@ -42,7 +55,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
             // Disabling some slots for now...
             if (i is 0 or 1 or 3) // pet, light pet, and mount
                 continue;
-            
+
             var context = i switch {
                 0 => 19, // pet
                 1 => 20, // light pet
@@ -62,7 +75,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
 
             ItemSlot.Draw(Main.spriteBatch, inv, context, i, panelRect.TopLeft());
         }
-        
+
         Main.inventoryScale = oldScale;
     }
 
@@ -83,5 +96,32 @@ public sealed class MiscVanitySlotSystem : ModSystem {
             return Main.screenHeight - Main.instance.RecommendedEquipmentAreaPushUp;
 
         return mh;
+    }
+
+    private static void DrawVanityMount(On_Mount.orig_Draw orig, Mount self, List<DrawData> playerDrawData, int drawType, Player drawPlayer, Vector2 position, Color drawColor, SpriteEffects playerEffect, float shadow) {
+        if (!drawPlayer.mount.Cart) {
+            orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
+            return;
+        }
+
+        var mount = drawPlayer.miscEquips[2];
+        var vanityMount = drawPlayer.GetModPlayer<MiscVanitySlotPlayer>().MiscVanity[2];
+
+        if (vanityMount.IsAir) {
+            orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
+            return;
+        }
+
+        // No reason to behave differently if the mount is the same, right?
+        if (self._type == vanityMount.mountType) {
+            orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
+            return;
+        }
+
+        drawMountDust = false;
+        drawPlayer.mount.SetMount(vanityMount.mountType, drawPlayer, drawPlayer.minecartLeft);
+        orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
+        drawPlayer.mount.SetMount(mount.mountType, drawPlayer, drawPlayer.minecartLeft);
+        drawMountDust = true;
     }
 }
