@@ -39,6 +39,10 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         panelRect.X = drawX + (2 * -47);
 
         for (var i = 0; i < 5; i++) {
+            // Disabling some slots for now...
+            if (i is 0 or 1 or 3) // pet, light pet, and mount
+                continue;
+            
             var context = i switch {
                 0 => 19, // pet
                 1 => 20, // light pet
