@@ -24,6 +24,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
 
         On_Mount.Draw += DrawVanityMount;
         On_Mount.DoSpawnDust += OverrideSpawnDust;
+        On_Mount.UpdateEffects += UpdateVanityCartEffects;
 
         On_Player.Update += UpdateVanityMountDelegations;
     }
@@ -127,6 +128,44 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         drawMountDust = true;
     }
 
+    private static void UpdateVanityCartEffects(On_Mount.orig_UpdateEffects orig, Mount self, Player mountedPlayer) {
+        // TODO: Figure out how to safely update for visuals only?
+        orig(self, mountedPlayer);
+
+        /*if (!self.Cart || self._data is null) {
+            orig(self, mountedPlayer);
+            return;
+        }
+
+        // var mount = mountedPlayer.miscEquips[2];
+        var vanityMount = mountedPlayer.GetModPlayer<MiscVanitySlotPlayer>().MiscVanity[2];
+
+        if (vanityMount.IsAir) {
+            orig(self, mountedPlayer);
+            return;
+        }
+
+        // No reason to behave differently if the mount is the same, right?
+        if (self._type == vanityMount.mountType) {
+            orig(self, mountedPlayer);
+            return;
+        }
+
+        // This feels... *bad*...
+        // Update: it *is* **bad**.
+        var oldType = self._type;
+        self._type = vanityMount.mountType;
+
+        // No idea if I need to bother with delegations here, ooh...
+        var oldDelegations = self._data.delegations;
+        var newDelegations = Mount.mounts[vanityMount.mountType].delegations;
+        self._data.delegations = newDelegations;
+        orig(self, mountedPlayer);
+        self._data.delegations = oldDelegations;
+
+        self._type = oldType;*/
+    }
+
     private static void UpdateVanityMountDelegations(On_Player.orig_Update orig, Player self, int i) {
         if (!self.mount.Cart || self.mount._data is null) {
             orig(self, i);
@@ -140,13 +179,13 @@ public sealed class MiscVanitySlotSystem : ModSystem {
             orig(self, i);
             return;
         }
-        
+
         // No reason to behave differently if the mount is the same, right?
         if (self.mount._type == vanityMount.mountType) {
             orig(self, i);
             return;
         }
-        
+
         var oldDelegations = self.mount._data.delegations;
         var newDelegations = Mount.mounts[vanityMount.mountType].delegations;
         self.mount._data.delegations = newDelegations;
