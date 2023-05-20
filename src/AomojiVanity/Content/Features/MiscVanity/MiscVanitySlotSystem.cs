@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameInput;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -29,10 +30,12 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         On_Mount.Draw += DrawVanityCart;
         On_Mount.DoSpawnDust += DontSpawnDustWhenSettingVanityCart;
         On_Mount.UpdateEffects += UpdateEffectsForVanityCart;
-
         On_Player.Update += UseVanityCartDelegations;
+
+        On_Main.DrawProjDirect += DrawVanityGrapplingHook;
     }
 
+#region Misc. Inventory Menu Drawing
     // TODO: Mostly ripped from vanilla; clean this up?
     private static void DrawMiscVanitySlots(On_Main.orig_DrawInventory orig, Main self) {
         orig(self);
@@ -116,6 +119,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         c.EmitDelegate((int lVal) => lVal == 1 ? 47 : 0);
         c.Emit(OpCodes.Sub);
     }
+#endregion
 
 #region Vanity Mount Detours
     private static void DrawVanityCart(On_Mount.orig_Draw orig, Mount self, List<DrawData> playerDrawData, int drawType, Player drawPlayer, Vector2 position, Color drawColor, SpriteEffects playerEffect, float shadow) {
@@ -213,6 +217,35 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         self.mount._data.delegations = newDelegations;
         orig(self, i);
         self.mount._data.delegations = oldDelegations;
+    }
+#endregion
+
+#region Vanity Hook Detours
+    private static void DrawVanityGrapplingHook(On_Main.orig_DrawProjDirect orig, Main self, Projectile proj) {
+        if (proj.aiStyle != ProjAIStyleID.Hook) {
+            orig(self, proj);
+            return;
+        }
+
+        var player = Main.player[proj.owner];
+
+        if (player.GetModPlayer<MiscVanitySlotPlayer>().MiscVanity[4].IsAir) {
+            orig(self, proj);
+            return;
+        }
+
+        var vanityType = player.GetModPlayer<MiscVanitySlotPlayer>().MiscVanity[4].shoot;
+
+        if (proj.type == vanityType) {
+            orig(self, proj);
+            return;
+        }
+
+        // Feels iffy...
+        var oldType = proj.type;
+        proj.type = vanityType;
+        orig(self, proj);
+        proj.type = oldType;
     }
 #endregion
 }
