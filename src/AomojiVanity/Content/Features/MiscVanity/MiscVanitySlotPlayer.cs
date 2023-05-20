@@ -14,6 +14,7 @@ public sealed class MiscVanitySlotPlayer : ModPlayer {
         MiscVanity = new Item[] { new(), new(), new(), new(), new() };
     }
 
+#region File serialization
     public override void SaveData(TagCompound tag) {
         base.SaveData(tag);
 
@@ -28,4 +29,13 @@ public sealed class MiscVanitySlotPlayer : ModPlayer {
         for (var i = 0; i < MiscVanity.Length; i++)
             MiscVanity[i] = ItemIO.Load(miscVanity[i]);
     }
+#endregion
+
+#region Network syncing
+    public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+        base.SyncPlayer(toWho, fromWho, newPlayer);
+        
+        
+    }
+#endregion
 }
