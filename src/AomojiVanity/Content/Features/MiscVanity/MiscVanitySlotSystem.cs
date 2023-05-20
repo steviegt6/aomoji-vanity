@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -21,18 +24,13 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         // really care? It's kind of a hassle and I want to ensure these are
         // drawn as close to the inventory as possible. Sorry, not sorry.
         On_Main.DrawInventory += DrawMiscVanitySlots;
+        IL_Main.DrawInventory += OffsetMiscDyeSlots;
 
         On_Mount.Draw += DrawVanityCart;
         On_Mount.DoSpawnDust += DontSpawnDustWhenSettingVanityCart;
         On_Mount.UpdateEffects += UpdateEffectsForVanityCart;
 
         On_Player.Update += UseVanityCartDelegations;
-    }
-
-#region Vanity Mount Detours
-    private static void DontSpawnDustWhenSettingVanityCart(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
-        if (drawMountDust)
-            orig(self, mountedPlayer, isDismounting);
     }
 
     // TODO: Mostly ripped from vanilla; clean this up?
@@ -53,7 +51,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         var drawX = Main.screenWidth - 92;
         var drawY = GetMh() + 174;
 
-        panelRect.X = drawX + (2 * -47);
+        panelRect.X = drawX + (1 /*2*/ * -47);
 
         for (var i = 0; i < 5; i++) {
             // Disabling some slots for now...
@@ -102,6 +100,24 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         return mh;
     }
 
+    private static void OffsetMiscDyeSlots(ILContext il) {
+        var c = new ILCursor(il);
+
+        var l = -1;
+        c.GotoNext(MoveType.After, x => x.MatchLdcI4(-47));
+        c.GotoPrev(x => x.MatchLdloc(out l));
+
+        // lol names are hard
+        if (l == -1)
+            throw new InvalidOperationException("Failed to find `l`!");
+
+        c.GotoNext(MoveType.After, x => x.MatchMul());
+        c.Emit(OpCodes.Ldloc, l);
+        c.EmitDelegate((int lVal) => lVal == 1 ? 47 : 0);
+        c.Emit(OpCodes.Sub);
+    }
+
+#region Vanity Mount Detours
     private static void DrawVanityCart(On_Mount.orig_Draw orig, Mount self, List<DrawData> playerDrawData, int drawType, Player drawPlayer, Vector2 position, Color drawColor, SpriteEffects playerEffect, float shadow) {
         if (!drawPlayer.mount.Cart) {
             orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
@@ -127,6 +143,11 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
         drawPlayer.mount.SetMount(mount.mountType, drawPlayer, drawPlayer.minecartLeft);
         drawMountDust = true;
+    }
+
+    private static void DontSpawnDustWhenSettingVanityCart(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
+        if (drawMountDust)
+            orig(self, mountedPlayer, isDismounting);
     }
 
     private static void UpdateEffectsForVanityCart(On_Mount.orig_UpdateEffects orig, Mount self, Player mountedPlayer) {
