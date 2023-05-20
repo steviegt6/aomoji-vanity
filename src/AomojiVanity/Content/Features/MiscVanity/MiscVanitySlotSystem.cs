@@ -29,6 +29,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         On_Player.Update += UseVanityCartDelegations;
     }
 
+#region Vanity Mount Detours
     private static void DontSpawnDustWhenSettingVanityCart(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
         if (drawMountDust)
             orig(self, mountedPlayer, isDismounting);
@@ -192,4 +193,5 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         orig(self, i);
         self.mount._data.delegations = oldDelegations;
     }
+#endregion
 }
