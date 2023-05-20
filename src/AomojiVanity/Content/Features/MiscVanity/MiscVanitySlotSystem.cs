@@ -22,14 +22,14 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         // drawn as close to the inventory as possible. Sorry, not sorry.
         On_Main.DrawInventory += DrawMiscVanitySlots;
 
-        On_Mount.Draw += DrawVanityMount;
-        On_Mount.DoSpawnDust += OverrideSpawnDust;
-        On_Mount.UpdateEffects += UpdateVanityCartEffects;
+        On_Mount.Draw += DrawVanityCart;
+        On_Mount.DoSpawnDust += DontSpawnDustWhenSettingVanityCart;
+        On_Mount.UpdateEffects += UpdateEffectsForVanityCart;
 
-        On_Player.Update += UpdateVanityMountDelegations;
+        On_Player.Update += UseVanityCartDelegations;
     }
 
-    private static void OverrideSpawnDust(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
+    private static void DontSpawnDustWhenSettingVanityCart(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
         if (drawMountDust)
             orig(self, mountedPlayer, isDismounting);
     }
@@ -101,7 +101,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         return mh;
     }
 
-    private static void DrawVanityMount(On_Mount.orig_Draw orig, Mount self, List<DrawData> playerDrawData, int drawType, Player drawPlayer, Vector2 position, Color drawColor, SpriteEffects playerEffect, float shadow) {
+    private static void DrawVanityCart(On_Mount.orig_Draw orig, Mount self, List<DrawData> playerDrawData, int drawType, Player drawPlayer, Vector2 position, Color drawColor, SpriteEffects playerEffect, float shadow) {
         if (!drawPlayer.mount.Cart) {
             orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
             return;
@@ -128,7 +128,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         drawMountDust = true;
     }
 
-    private static void UpdateVanityCartEffects(On_Mount.orig_UpdateEffects orig, Mount self, Player mountedPlayer) {
+    private static void UpdateEffectsForVanityCart(On_Mount.orig_UpdateEffects orig, Mount self, Player mountedPlayer) {
         // TODO: Figure out how to safely update for visuals only?
         orig(self, mountedPlayer);
 
@@ -166,7 +166,7 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         self._type = oldType;*/
     }
 
-    private static void UpdateVanityMountDelegations(On_Player.orig_Update orig, Player self, int i) {
+    private static void UseVanityCartDelegations(On_Player.orig_Update orig, Player self, int i) {
         if (!self.mount.Cart || self.mount._data is null) {
             orig(self, i);
             return;
