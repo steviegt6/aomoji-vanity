@@ -12,7 +12,7 @@ namespace AomojiVanity.Content.Features.MiscVanity;
 
 public sealed class MiscVanitySlotSystem : ModSystem {
     private static bool drawMountDust = true;
-    
+
     public override void Load() {
         base.Load();
 
@@ -24,6 +24,8 @@ public sealed class MiscVanitySlotSystem : ModSystem {
 
         On_Mount.Draw += DrawVanityMount;
         On_Mount.DoSpawnDust += OverrideSpawnDust;
+
+        On_Player.Update += UpdateVanityMountDelegations;
     }
 
     private static void OverrideSpawnDust(On_Mount.orig_DoSpawnDust orig, Mount self, Player mountedPlayer, bool isDismounting) {
@@ -123,5 +125,32 @@ public sealed class MiscVanitySlotSystem : ModSystem {
         orig(self, playerDrawData, drawType, drawPlayer, position, drawColor, playerEffect, shadow);
         drawPlayer.mount.SetMount(mount.mountType, drawPlayer, drawPlayer.minecartLeft);
         drawMountDust = true;
+    }
+
+    private static void UpdateVanityMountDelegations(On_Player.orig_Update orig, Player self, int i) {
+        if (!self.mount.Cart || self.mount._data is null) {
+            orig(self, i);
+            return;
+        }
+
+        var mount = self.miscEquips[2];
+        var vanityMount = self.GetModPlayer<MiscVanitySlotPlayer>().MiscVanity[2];
+
+        if (vanityMount.IsAir) {
+            orig(self, i);
+            return;
+        }
+        
+        // No reason to behave differently if the mount is the same, right?
+        if (self.mount._type == vanityMount.mountType) {
+            orig(self, i);
+            return;
+        }
+        
+        var oldDelegations = self.mount._data.delegations;
+        var newDelegations = Mount.mounts[vanityMount.mountType].delegations;
+        self.mount._data.delegations = newDelegations;
+        orig(self, i);
+        self.mount._data.delegations = oldDelegations;
     }
 }
