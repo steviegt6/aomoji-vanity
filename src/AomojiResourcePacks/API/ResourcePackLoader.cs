@@ -22,7 +22,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace AomojiVanity.API.ResourcePacks;
+namespace AomojiResourcePacks.API;
 
 public static class ResourcePackLoader {
     [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
@@ -177,7 +177,7 @@ public static class ResourcePackLoader {
             return;
         }
 
-        DisplayMouseTextIfHovered(affectedElement, "Mods.AomojiVanity.UI.ResourcePacks.ForceEnabled");
+        DisplayMouseTextIfHovered(affectedElement, "Mods.AomojiResourcePacks.UI.ResourcePacks.ForceEnabled");
     }
 
     private static void DisplayMouseTextIfHovered(UIElement affectedElement, string textKey) {

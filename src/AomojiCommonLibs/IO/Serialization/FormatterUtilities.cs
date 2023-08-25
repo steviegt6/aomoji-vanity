@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace AomojiVanity.IO.Serialization;
+namespace AomojiCommonLibs.IO.Serialization;
 
 /// <summary>
 ///     Provides utilities in line with functionality provided by

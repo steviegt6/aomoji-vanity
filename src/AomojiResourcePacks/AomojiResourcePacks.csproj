@@ -3,7 +3,7 @@
     <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets"/>
 
     <PropertyGroup>
-        <AssemblyName>AomojiVanity</AssemblyName>
+        <AssemblyName>AomojiResourcePacks</AssemblyName>
         <TargetFramework>net6.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
@@ -17,7 +17,6 @@
         <!-- We don't need to worry about not including these since tModLoader
              doesn't package dependencies by default. -->
         <ProjectReference Include="..\AomojiCommonLibs\AomojiCommonLibs.csproj"/>
-        <ProjectReference Include="..\AomojiResourcePacks\AomojiResourcePacks.csproj"/>
     </ItemGroup>
 
 </Project>

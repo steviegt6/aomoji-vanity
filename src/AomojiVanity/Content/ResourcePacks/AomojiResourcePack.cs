@@ -1,4 +1,4 @@
-﻿using AomojiVanity.API.ResourcePacks;
+﻿using AomojiResourcePacks.API;
 
 namespace AomojiVanity.Content.ResourcePacks; 
 

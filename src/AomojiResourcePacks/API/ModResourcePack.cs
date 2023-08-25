@@ -1,10 +1,10 @@
-﻿using AomojiVanity.IO.ContentSources;
-using AomojiVanity.IO.Serialization;
+﻿using AomojiCommonLibs.IO.ContentSources;
+using AomojiCommonLibs.IO.Serialization;
 using ReLogic.Content.Sources;
 using Terraria.IO;
 using Terraria.ModLoader;
 
-namespace AomojiVanity.API.ResourcePacks;
+namespace AomojiResourcePacks.API;
 
 /// <summary>
 ///     A modded resource pack. That is, a resource pack provided directly by

@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AomojiVanity.Build", "Aomoj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AomojiVanity", "AomojiVanity\AomojiVanity.csproj", "{9DEAA6E3-5308-4DAE-B823-4200E2BBEF80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AomojiResourcePacks", "AomojiResourcePacks\AomojiResourcePacks.csproj", "{07185906-B0CC-44FB-9A08-37A5B818C79C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AomojiCommonLibs", "AomojiCommonLibs\AomojiCommonLibs.csproj", "{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +30,13 @@ Global
 		{9DEAA6E3-5308-4DAE-B823-4200E2BBEF80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DEAA6E3-5308-4DAE-B823-4200E2BBEF80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DEAA6E3-5308-4DAE-B823-4200E2BBEF80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07185906-B0CC-44FB-9A08-37A5B818C79C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07185906-B0CC-44FB-9A08-37A5B818C79C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07185906-B0CC-44FB-9A08-37A5B818C79C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07185906-B0CC-44FB-9A08-37A5B818C79C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

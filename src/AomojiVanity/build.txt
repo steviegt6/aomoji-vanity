@@ -1,3 +1,4 @@
 displayName = Aomoji Vanity
 author = Tomat & Liz Valentine
 version = 1.0.0
+modReferences=AomojiCommonLibs,AomojiResourcePacks

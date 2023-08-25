@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.IO;
 
-namespace AomojiVanity.API.ResourcePacks;
+namespace AomojiResourcePacks.API;
 
 /// <summary>
 ///     A <see cref="ResourcePack"/> which uses <see cref="IContentSource"/>s

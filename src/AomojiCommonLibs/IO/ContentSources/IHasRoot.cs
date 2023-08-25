@@ -1,6 +1,6 @@
 ﻿using ReLogic.Content.Sources;
 
-namespace AomojiVanity.IO.ContentSources;
+namespace AomojiCommonLibs.IO.ContentSources;
 
 /// <summary>
 ///     Indicates an <see cref="IContentSource"/> has a <see cref="Root"/>.

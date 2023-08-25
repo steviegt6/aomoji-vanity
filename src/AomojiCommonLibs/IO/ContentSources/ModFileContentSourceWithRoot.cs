@@ -8,7 +8,7 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 
-namespace AomojiVanity.IO.ContentSources;
+namespace AomojiCommonLibs.IO.ContentSources;
 
 /// <summary>
 ///     An <see cref="IContentSource"/> implementation that uses a

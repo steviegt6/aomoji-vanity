@@ -1,0 +1,4 @@
+displayName = Aomoji Resource Packs API
+author = Tomat
+version = 1.0.0
+modReferences=AomojiCommonLibs

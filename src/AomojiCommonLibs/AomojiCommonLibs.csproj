@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets" />
+
+    <PropertyGroup>
+        <AssemblyName>AomojiResourcePacks</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+    </ItemGroup>
+
+</Project>
