@@ -12,7 +12,17 @@ _Aomoji Vanity_ (referred to hereinafter as simply _Aomoji_) is a content mod fo
 
 ### API
 
-Aomoji exposes certain features through an API (located in the base `AomojiVanity.API` namespace) for other mods to use if they so desire (note that this requires a dependency on Aomoji). Depending on the generality, usefulness, and demand of a feature, it may be adapted PR'd directly into tModLoader (as was done with [our `ModHair` API](https://github.com/tModLoader/tModLoader/pull/3433)[^1]).
+Very rarely, Aomoji may expose certain features through an API (located in the base `AomojiVanity.API` namespace) for other mods to use if they so desire (note that this requires a dependency on Aomoji).
+
+Generally, we try to instead expose these APIs through pull requests to tModLoader (as was done with [our `ModHair` API](https://github.com/tModLoader/tModLoader/pull/3433)[^1]) or through separate library/API mods.
+
+## `AomojiCommonLibs`
+
+Useful programmatic modding utilities; a separate library mod.
+
+## `AomojiResourcePacks`
+
+A modded resource pack API that Aomoji Vanity uses.
 
 ## `AomojiVanity.Build`
 
