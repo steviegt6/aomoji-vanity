@@ -3,3 +3,6 @@ Aomoji Common API
 This mod provides some generalized utilities/libraries/APIs/what-have-you for other mods to use.
 
 Most of what this mod offers consists mostly of programmatic utilities to be used in aiding mod development.
+
+This API is free software licensed under the Affero GNU General Public License, version 3.0.
+Any mods that use this API must be licensed under the same license or a later version of it.
