@@ -8,15 +8,18 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReLogic.Content;
 using ReLogic.Content.Sources;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ID;
+using Terraria.Initializers;
 using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -31,6 +34,13 @@ public static class ResourcePackLoader {
             ResourcePackLoader.Load();
         }
 
+        // ReSharper disable once MemberHidesStaticFromOuterClass
+        public override void PostSetupContent() {
+            base.PostSetupContent();
+
+            ResourcePackLoader.PostSetupContent();
+        }
+
         public override void OnModUnload() {
             base.OnModUnload();
 
@@ -38,19 +48,23 @@ public static class ResourcePackLoader {
         }
     }
 
+    private static string ResourcePacksPath => Path.Combine(Main.SavePath, "aomoji", "resourcePacks.json");
+
     private static List<ModResourcePack> modResourcePacks = new();
-    private static Dictionary<string, bool> modResourcePacksEnabled = new();
+    private static List<string> enabledResourcePacks = new();
+    private static bool resourcePacksSetThisSession = false;
 
     public static void Register(ModResourcePack resourcePack) {
         modResourcePacks.Add(resourcePack);
 
         if (!resourcePack.ForceEnabled)
-            resourcePack.Entity.IsEnabled = modResourcePacksEnabled.TryGetValue(resourcePack.Name, out var enabled) ? enabled : resourcePack.Entity.IsEnabled;
+            resourcePack.Entity.IsEnabled = enabledResourcePacks.Contains(resourcePack.Name) || resourcePack.Entity.IsEnabled;
     }
 
     internal static void Load() {
+        Directory.CreateDirectory(Path.GetDirectoryName(ResourcePacksPath)!);
+
         modResourcePacks = new List<ModResourcePack>();
-        modResourcePacksEnabled = Main.Configuration.Get("AomojiVanity:ResourcePacks", new Dictionary<string, bool>());
 
         IL_ResourcePack.ctor += SkipPathSettingForModdedPacks;
         On_ResourcePack.HasFile += ResourcePackHasModdedFile;
@@ -64,13 +78,33 @@ public static class ResourcePackLoader {
         On_UIResourcePackSelectionMenu.DisablePackUpdate += ShowForceEnabledTooltip;
 
         On_UIResourcePack.DrawSelf += DrawModdedIcon;
+
+        On_AssetSourceController.UseResourcePacks += UpdateInUseResourcePacks;
+    }
+
+    internal static void PostSetupContent() {
+        enabledResourcePacks = File.Exists(ResourcePacksPath) ? JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(ResourcePacksPath)) : GetPackStatesFromSourceController();
+
+        // Force the current resource packs to update.
+        Main.QueueMainThreadAction(() => {
+            Main.AssetSourceController.UseResourcePacks(AssetInitializer.CreateResourcePackList(Main.instance.Services));
+        });
     }
 
     internal static void Unload() {
-        Main.Configuration.Put("AomojiVanity:ResourcePacks", modResourcePacks.ToDictionary(x => x.Name, x => x.Entity.IsEnabled));
-
         modResourcePacks = null!;
-        modResourcePacksEnabled = null!;
+        enabledResourcePacks = null!;
+    }
+
+    private static List<string> GetPackStatesFromSourceController() {
+        return Main.AssetSourceController.ActiveResourcePackList.EnabledPacks.OrderBy(x => x.SortingOrder).Select(ConvertPackToKey).ToList();
+    }
+
+    private static string ConvertPackToKey(ResourcePack pack) {
+        if (pack is ContentSourceResourcePack { ModResourcePack: { } } contentPack)
+            return contentPack.ModResourcePack.FullName;
+
+        return pack.FullPath;
     }
 
     private static void SkipPathSettingForModdedPacks(ILContext il) {
@@ -127,8 +161,24 @@ public static class ResourcePackLoader {
     }
 
     private static ResourcePackList FromJsonAddModdedPacks(On_ResourcePackList.orig_FromJson orig, JArray serializedState, IServiceProvider services, string searchPath) {
-        var list = orig(serializedState, services, searchPath);
-        return new ResourcePackList(list.AllPacks.Concat(modResourcePacks.Select(x => x.Entity)));
+        resourcePacksSetThisSession = true;
+
+        var resourcePacks = orig(serializedState, services, searchPath).AllPacks.Concat(modResourcePacks.Select(x => x.Entity)).ToList();
+        var canonicalPacks = new List<ResourcePack>();
+
+        foreach (var pack in resourcePacks) {
+            if (enabledResourcePacks.Contains(ConvertPackToKey(pack))) {
+                pack.IsEnabled = true;
+                pack.SortingOrder = enabledResourcePacks.IndexOf(ConvertPackToKey(pack));
+            }
+            else {
+                pack.IsEnabled = pack is ContentSourceResourcePack { ModResourcePack.ForceEnabled: true };
+            }
+
+            canonicalPacks.Add(pack);
+        }
+
+        return new ResourcePackList(canonicalPacks);
     }
 
     private static UIElement OverrideOnLeftClickWhenForceEnabled(On_UIResourcePackSelectionMenu.orig_CreatePackToggleButton orig, UIResourcePackSelectionMenu self, ResourcePack resourcePack) {
@@ -185,17 +235,27 @@ public static class ResourcePackLoader {
             return;
 
         var textValue = Language.GetTextValue(textKey);
-        Main.instance.MouseText(textValue, 0, 0);
+        Main.instance.MouseText(textValue);
     }
 
     private static void DrawModdedIcon(On_UIResourcePack.orig_DrawSelf orig, UIResourcePack self, SpriteBatch spriteBatch) {
         orig(self, spriteBatch);
 
-        if (self.ResourcePack is not ContentSourceResourcePack extended)
+        if (self.ResourcePack is not ContentSourceResourcePack)
             return;
 
         var dimensions = self.GetDimensions();
-        var asset = ModContent.Request<Texture2D>("AomojiVanity/Assets/UI/ModdedResourcePackIcon").Value;
+        var asset = ModContent.Request<Texture2D>("AomojiResourcePacks/Assets/UI/ModdedResourcePackIcon").Value;
         spriteBatch.Draw(asset, new Vector2(dimensions.X + dimensions.Width - asset.Width - 3f, dimensions.Y + 2f), asset.Frame(), Color.White);
+    }
+
+    private static void UpdateInUseResourcePacks(On_AssetSourceController.orig_UseResourcePacks orig, AssetSourceController self, ResourcePackList resourcepacks) {
+        if (!resourcePacksSetThisSession)
+            return;
+        
+        orig(self, resourcepacks);
+
+        enabledResourcePacks = GetPackStatesFromSourceController();
+        File.WriteAllText(ResourcePacksPath, JsonConvert.SerializeObject(enabledResourcePacks));
     }
 }
