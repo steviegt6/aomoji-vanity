@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets" />
+    <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets"/>
 
     <PropertyGroup>
         <AssemblyName>AomojiVanity</AssemblyName>
@@ -10,14 +10,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <!-- We don't need to worry about not including these since tModLoader
              doesn't package dependencies by default. -->
-        <ProjectReference Include="..\AomojiCommonLibs\AomojiCommonLibs.csproj" />
-        <ProjectReference Include="..\AomojiResourcePacks\AomojiResourcePacks.csproj" />
+        <ProjectReference Include="..\AomojiCommonLibs\AomojiCommonLibs.csproj"/>
+        <ProjectReference Include="..\AomojiResourcePacks\AomojiResourcePacks.csproj"/>
     </ItemGroup>
 
 </Project>

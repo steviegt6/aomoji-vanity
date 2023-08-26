@@ -1,0 +1,4 @@
+displayName = Lucifer | Aomoji Lighting Engine API
+author = Tomat
+version = 1.0.0
+modReferences = AomojiCommonLibs

@@ -1,0 +1,5 @@
+Lucifer
+
+...is the Latin name for the morning appearances of the planet Venus. It corresponds to the Greek names Phosphorus, "light-bringer", and Eosphorus, "dawn-bringer". The entity's Latin name was subsequently absorbed into Christianity as the name for the devil.
+
+This mod serves as an API that allows mods to register their own lighting engines for users to choose between (including the Vanilla lighting engine).

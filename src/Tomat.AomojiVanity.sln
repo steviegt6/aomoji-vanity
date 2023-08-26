@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AomojiResourcePacks", "Aomo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AomojiCommonLibs", "AomojiCommonLibs\AomojiCommonLibs.csproj", "{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikari", "Hikari\Hikari.csproj", "{19D076D2-9175-4D58-9FDF-6696B979CB39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucifer", "Lucifer\Lucifer.csproj", "{9ADF7538-DE92-4472-9770-0F5B329CF7EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,5 +42,13 @@ Global
 		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11356AF5-437C-44B0-8E4E-BAD3FBCACF20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19D076D2-9175-4D58-9FDF-6696B979CB39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D076D2-9175-4D58-9FDF-6696B979CB39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D076D2-9175-4D58-9FDF-6696B979CB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D076D2-9175-4D58-9FDF-6696B979CB39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

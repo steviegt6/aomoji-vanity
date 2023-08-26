@@ -10,6 +10,8 @@ namespace AomojiCommonLibs.Reflection.RuntimeAccessor;
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class MethodAccessorAttribute : Attribute {
     public string Name { get; }
+    
+    public bool IsStatic { get; set; } = false;
 
     public MethodAccessorAttribute(string name) {
         Name = name;

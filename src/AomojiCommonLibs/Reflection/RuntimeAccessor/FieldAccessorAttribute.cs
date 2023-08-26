@@ -11,6 +11,8 @@ namespace AomojiCommonLibs.Reflection.RuntimeAccessor;
 public sealed class FieldAccessorAttribute : Attribute {
     public string Name { get; }
 
+    public bool IsStatic { get; set; } = false;
+
     public FieldAccessorAttribute(string name) {
         Name = name;
     }

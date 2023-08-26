@@ -10,6 +10,8 @@ namespace AomojiCommonLibs.Reflection.RuntimeAccessor;
 [AttributeUsage(AttributeTargets.Property)]
 public sealed class PropertyAccessorAttribute : Attribute {
     public string Name { get; }
+    
+    public bool IsStatic { get; set; } = false;
 
     public PropertyAccessorAttribute(string name) {
         Name = name;

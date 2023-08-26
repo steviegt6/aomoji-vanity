@@ -1,0 +1,4 @@
+displayName = Hikari | Aomoji Lighting Engine Rewrite
+author = Tomat
+version = 1.0.0 
+modReferences=Lucifer
