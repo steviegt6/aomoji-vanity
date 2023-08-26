@@ -255,8 +255,8 @@ public static class ResourcePackLoader {
         orig(self, resourcePacks);
 
         if (!actingUponModSourceController) {
-            actingUponModSourceController = true;
             // Make mods' asset repositories aware of the resource packs.
+            actingUponModSourceController = true;
             modSourceControllers ??= ModLoader.Mods.ToDictionary(x => x, x => new AssetSourceController(x.Assets, new[] { x.RootContentSource }));
 
             foreach (var mod in ModLoader.Mods) {

@@ -27,7 +27,7 @@ public class ContentSourceResourcePack : ResourcePack {
     ///     files, such as <c>pack.json</c> and <c>icon.png</c>.
     /// </summary>
     public IContentSource? RootSource { get; set; }
-    
+
     /// <summary>
     ///     The <see cref="ModResourcePack"/> that this resource pack is
     ///     associated with.
