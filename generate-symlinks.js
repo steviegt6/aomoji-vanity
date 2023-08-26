@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 
-const dirs = ["AomojiCommonLibs", "AomojiResourcePacks", "AomojiVanity"];
+const dirs = ["AomojiCommonLibs", "AomojiResourcePacks", "AomojiVanity", "Hikari", "Lucifer"];
 
 const sourceDirs = dirs.map((dir) => path.join(__dirname, "src", dir));
 const targetDirs = dirs.map((dir) => path.join(__dirname, "..", dir));
