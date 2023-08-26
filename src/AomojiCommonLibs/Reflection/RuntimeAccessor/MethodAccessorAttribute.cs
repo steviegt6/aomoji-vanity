@@ -2,7 +2,7 @@
 
 namespace AomojiCommonLibs.Reflection.RuntimeAccessor;
 
-[AttributeUsage(AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Method)]
 public sealed class MethodAccessorAttribute : Attribute {
     public string Name { get; }
 
