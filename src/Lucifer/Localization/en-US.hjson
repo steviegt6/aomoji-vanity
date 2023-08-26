@@ -1,0 +1,14 @@
+{
+    "Mods": {
+        "Lucifer": {
+            "UI": {
+                "LightingEngine": "Lighting Engine: {0}"
+            }
+            "LightingEngineProviders": {
+                "VanillaLightingEngineProvider": {
+                    "DisplayName": "Vanilla"
+                }
+            }
+        }
+    }
+}

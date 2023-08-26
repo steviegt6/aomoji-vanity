@@ -17,4 +17,8 @@
         <ProjectReference Include="..\Lucifer\Lucifer.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Content" />
+    </ItemGroup>
+
 </Project>

@@ -1,0 +1,11 @@
+{
+    "Mods": {
+        "Hikari": {
+            "LightingEngineProviders": {
+                "HikariLightingEngineProvider": {
+                    "DisplayName": "Hikari"
+                }
+            }
+        }
+    }
+}
