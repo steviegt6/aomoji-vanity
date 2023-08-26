@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using AomojiCommonLibs.Reflection.RuntimeAccessor;
 using JetBrains.Annotations;
@@ -39,9 +40,12 @@ public sealed class LightingEngineLoader : ModSystem {
         }
     }
 
+    private static string LightingEngineProviderPath => Path.Combine(Main.SavePath, "aomoji", "lighting_engine_provider.txt");
+
     private readonly ILightingAccessor lightingAccessor = RuntimeAccessorGenerator.GenerateAccessor<Lighting, ILightingAccessor>(null);
     private readonly List<LightingEngineProvider> engineProviders = new();
 
+    private bool shouldSaveLightingEngineProvider;
     private Hook? setModeHook;
 
     public void Register(LightingEngineProvider provider) {
@@ -65,7 +69,23 @@ public sealed class LightingEngineLoader : ModSystem {
     public override void OnModLoad() {
         base.OnModLoad();
 
+        Directory.CreateDirectory(Path.GetDirectoryName(LightingEngineProviderPath)!);
+
+        shouldSaveLightingEngineProvider = false;
         Mod.AddContent(CurrentLightingEngine = new VanillaLightingEngineProvider());
+        shouldSaveLightingEngineProvider = true;
+    }
+
+    public override void PostSetupContent() {
+        base.PostSetupContent();
+
+        if (!File.Exists(LightingEngineProviderPath))
+            return;
+
+        var providerName = File.ReadAllText(LightingEngineProviderPath);
+        var provider = engineProviders.Find(x => x.Name == providerName);
+        if (provider != null)
+            CurrentLightingEngine = provider;
     }
 
     public override void Unload() {
@@ -78,6 +98,9 @@ public sealed class LightingEngineLoader : ModSystem {
     internal void CycleProvider() {
         var index = engineProviders.IndexOf(CurrentLightingEngine);
         CurrentLightingEngine = engineProviders[(index + 1) % engineProviders.Count];
+
+        if (shouldSaveLightingEngineProvider)
+            File.WriteAllText(LightingEngineProviderPath, CurrentLightingEngine.Name);
     }
 
     private void AddLightingEngineOptionsToIngameOptions(ILContext il) {
@@ -166,7 +189,7 @@ public sealed class LightingEngineLoader : ModSystem {
             CycleProvider();
         });
         c.MarkLabel(label);
-        
+
         c.Emit(OpCodes.Ldloc, buttonNumIndex);
     }
 
