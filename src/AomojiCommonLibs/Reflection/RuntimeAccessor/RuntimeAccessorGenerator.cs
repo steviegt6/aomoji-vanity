@@ -7,10 +7,25 @@ using System.Runtime.CompilerServices;
 
 namespace AomojiCommonLibs.Reflection.RuntimeAccessor;
 
+/// <summary>
+///     Handles dynamically implementing interfaces for accessing
+///     visibility-restricted members at runtime.
+/// </summary>
 public static class RuntimeAccessorGenerator {
     // OPTIMIZATION: Type handles have better hashcode performance.
     private static readonly ConcurrentDictionary<nint, ConcurrentDictionary<nint, Func<object, object>>> accessor_generators = new();
 
+    /// <summary>
+    ///     Generates an accessor implementing <typeparamref name="TInterface"/>
+    ///     for the given <paramref name="from"/> object of type
+    ///     <typeparamref name="TSource"/>.
+    /// </summary>
+    /// <param name="from">The instance to access.</param>
+    /// <typeparam name="TSource">The type to access members from.</typeparam>
+    /// <typeparam name="TInterface">The accessor to implement.</typeparam>
+    /// <returns>
+    ///     An implemented instance of <typeparamref name="TInterface"/>.
+    /// </returns>
     public static TInterface GenerateAccessor<TSource, TInterface>(TSource from) {
         var func = BuildOrGetAccessorGenerator<TSource, TInterface>();
         return (TInterface)func(from!);
@@ -110,6 +125,9 @@ public static class RuntimeAccessorGenerator {
             if (method.IsStatic)
                 continue;
 
+            if (method.GetCustomAttribute<MethodAccessorAttribute>() is not { } methodAccessor)
+                continue;
+
             var methodDef = typeBuilder.DefineMethod(method.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.NewSlot, method.ReturnType, method.GetParameters().Select(p => p.ParameterType).ToArray());
 
             var methodIL = methodDef.GetILGenerator();
@@ -117,7 +135,7 @@ public static class RuntimeAccessorGenerator {
             methodIL.Emit(OpCodes.Ldfld, instanceField);
             for (var i = 0; i < method.GetParameters().Length; i++)
                 methodIL.Emit(OpCodes.Ldarg, i + 1);
-            methodIL.Emit(OpCodes.Callvirt, typeof(TSource).GetMethod(method.Name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, method.GetParameters().Select(p => p.ParameterType).ToArray(), null)!);
+            methodIL.Emit(OpCodes.Callvirt, typeof(TSource).GetMethod(methodAccessor.Name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, method.GetParameters().Select(p => p.ParameterType).ToArray(), null)!);
             methodIL.Emit(OpCodes.Ret);
         }
         
