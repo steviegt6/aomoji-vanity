@@ -1,9 +1,1 @@
-Mods: {
-    AomojiResourcePacks: {
-        UI: {
-            ResourcePacks: {
-                ForceEnabled: Forcefully enabled
-            }
-        }
-    }
-}
+Mods.AomojiResourcePacks.UI.ResourcePacks.ForceEnabled: Forcefully enabled
