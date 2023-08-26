@@ -17,7 +17,7 @@ namespace AomojiCommonLibs.IO.ContentSources;
 /// </summary>
 public class ModFileContentSourceWithRoot : IContentSource,
                                             IHasRoot {
-    public interface IModAccessor {
+    private interface IModAccessor {
         [PropertyAccessor("File")]
         TmodFile File { get; }
 

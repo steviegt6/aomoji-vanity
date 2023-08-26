@@ -40,6 +40,7 @@ public static class RuntimeAccessorGenerator {
         
         var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("AomojiCommonLibs.RuntimeAccessorGenerators"), AssemblyBuilderAccess.RunAndCollect);
         assembly.SetCustomAttribute(new CustomAttributeBuilder(typeof(IgnoresAccessChecksToAttribute).GetConstructor(new[] { typeof(string) })!, new object[] { typeof(TSource).Assembly.GetName().Name! }));
+        assembly.SetCustomAttribute(new CustomAttributeBuilder(typeof(IgnoresAccessChecksToAttribute).GetConstructor(new[] { typeof(string) })!, new object[] { typeof(TInterface).Assembly.GetName().Name! }));
         var module = assembly.DefineDynamicModule("AomojiCommonLibs.RuntimeAccessorGenerators");
 
         var typeName = $"{typeof(TSource).FullName}_RuntimeAccessor_{typeof(TInterface).FullName}";
