@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using AomojiCommonLibs.Reflection.RuntimeAccessor;
 using ReLogic.Content;
 using ReLogic.Content.Sources;
 using Terraria.GameContent;
@@ -17,6 +17,15 @@ namespace AomojiCommonLibs.IO.ContentSources;
 /// </summary>
 public class ModFileContentSourceWithRoot : IContentSource,
                                             IHasRoot {
+    public interface IModAccessor {
+        [PropertyAccessor("File")]
+        TmodFile File { get; }
+
+        public static IModAccessor GenerateAccessor(Mod mod) {
+            return RuntimeAccessorGenerator.GenerateAccessor<Mod, IModAccessor>(mod);
+        }
+    }
+
     IContentValidator IContentSource.ContentValidator { get; set; } = VanillaContentValidator.Instance;
 
     RejectedAssetCollection IContentSource.Rejections { get; } = new();
@@ -26,7 +35,7 @@ public class ModFileContentSourceWithRoot : IContentSource,
     private readonly TmodFile file;
 
     public ModFileContentSourceWithRoot(Mod mod, string root) {
-        file = (TmodFile) typeof(Mod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(mod)!;
+        file = IModAccessor.GenerateAccessor(mod).File;
         Root = root;
     }
 
