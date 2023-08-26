@@ -8,7 +8,9 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Light;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -56,6 +58,8 @@ public sealed class LightingEngineLoader : ModSystem {
         );
 
         IL_IngameOptions.Draw += AddLightingEngineOptionsToIngameOptions;
+
+        IL_Main.DrawMenu += AddLightingEngineOptionsToMainMenu;
     }
 
     public override void OnModLoad() {
@@ -116,12 +120,54 @@ public sealed class LightingEngineLoader : ModSystem {
         c.Emit(OpCodes.Brfalse, label);
         c.EmitDelegate(CycleProvider);
         c.MarkLabel(label);
-        
+
         // buttonNum++;
         c.Emit(OpCodes.Ldloc, buttonNumIndex);
         c.Emit(OpCodes.Ldc_I4_1);
         c.Emit(OpCodes.Add);
         c.Emit(OpCodes.Stloc, buttonNumIndex);
+    }
+
+    private void AddLightingEngineOptionsToMainMenu(ILContext il) {
+        var buttonNumIndex = -1;
+
+        var c = new ILCursor(il);
+
+        c.GotoNext(x => x.MatchLdstr("UI.LightMode_"));
+        c.GotoPrev(x => x.MatchLdloc(out buttonNumIndex));
+        c.GotoPrev(MoveType.Before, x => x.MatchLdloc(buttonNumIndex));
+        var start = c.Index;
+        c.GotoNext(MoveType.After, x => x.MatchStelemRef());
+        var end = c.Index;
+        var instructions = il.Instrs.ToArray()[start..end];
+
+        start = c.Index;
+        c.GotoNext(MoveType.Before, x => x.MatchBneUn(out _));
+        end = c.Index;
+        var conditionalInstructions = il.Instrs.ToArray()[start..end];
+
+        c.GotoNext(MoveType.After, x => x.MatchLdloc(buttonNumIndex));
+        c.Emit(OpCodes.Pop);
+
+        var label = c.DefineLabel();
+
+        foreach (var instruction in instructions)
+            c.Emit(instruction.OpCode, instruction.Operand);
+
+        c.GotoPrev(MoveType.Before, x => x.MatchStelemRef());
+        c.Emit(OpCodes.Pop);
+        c.EmitDelegate(() => Language.GetTextValue("Mods.Lucifer.UI.LightingEngine", CurrentLightingEngine.DisplayName.Value));
+        c.GotoNext(MoveType.After, x => x.MatchStelemRef());
+        foreach (var instruction in conditionalInstructions)
+            c.Emit(instruction.OpCode, instruction.Operand);
+        c.Emit(OpCodes.Bne_Un, label);
+        c.EmitDelegate(() => {
+            SoundEngine.PlaySound(SoundID.MenuTick);
+            CycleProvider();
+        });
+        c.MarkLabel(label);
+        
+        c.Emit(OpCodes.Ldloc, buttonNumIndex);
     }
 
     private static ILightingEngine GetLightingEngine(LightingEngineProvider provider, ref LightMode mode) {
