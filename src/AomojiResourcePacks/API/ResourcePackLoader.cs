@@ -50,9 +50,11 @@ public static class ResourcePackLoader {
 
     private static string ResourcePacksPath => Path.Combine(Main.SavePath, "aomoji", "resourcePacks.json");
 
+    private static Dictionary<Mod, AssetSourceController>? modSourceControllers;
     private static List<ModResourcePack> modResourcePacks = new();
     private static List<string> enabledResourcePacks = new();
-    private static bool resourcePacksSetThisSession = false;
+    private static bool resourcePacksSetThisSession;
+    private static bool actingUponModSourceController;
 
     public static void Register(ModResourcePack resourcePack) {
         modResourcePacks.Add(resourcePack);
@@ -249,12 +251,27 @@ public static class ResourcePackLoader {
         spriteBatch.Draw(asset, new Vector2(dimensions.X + dimensions.Width - asset.Width - 3f, dimensions.Y + 2f), asset.Frame(), Color.White);
     }
 
-    private static void UpdateInUseResourcePacks(On_AssetSourceController.orig_UseResourcePacks orig, AssetSourceController self, ResourcePackList resourcepacks) {
+    private static void UpdateInUseResourcePacks(On_AssetSourceController.orig_UseResourcePacks orig, AssetSourceController self, ResourcePackList resourcePacks) {
+        orig(self, resourcePacks);
+
+        if (!actingUponModSourceController) {
+            actingUponModSourceController = true;
+            // Make mods' asset repositories aware of the resource packs.
+            modSourceControllers ??= ModLoader.Mods.ToDictionary(x => x, x => new AssetSourceController(x.Assets, new[] { x.RootContentSource }));
+
+            foreach (var mod in ModLoader.Mods) {
+                var controller = modSourceControllers[mod];
+                controller.UseResourcePacks(resourcePacks);
+                controller.Refresh();
+            }
+
+            actingUponModSourceController = false;
+        }
+
         if (!resourcePacksSetThisSession)
             return;
-        
-        orig(self, resourcepacks);
 
+        // Save in-use resource packs.
         enabledResourcePacks = GetPackStatesFromSourceController();
         File.WriteAllText(ResourcePacksPath, JsonConvert.SerializeObject(enabledResourcePacks));
     }
