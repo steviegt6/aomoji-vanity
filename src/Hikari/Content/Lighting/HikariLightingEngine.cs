@@ -6,6 +6,8 @@ using ReLogic.Threading;
 using Terraria;
 using Terraria.Graphics.Light;
 using Terraria.ModLoader;
+using Vector3 = System.Numerics.Vector3;
+using XnaVector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace Hikari.Content.Lighting;
 
@@ -36,8 +38,8 @@ public sealed class HikariLightingEngine : ILightingEngine {
         workingLightMap.Clear();
     }
 
-    public void AddLight(int x, int y, Vector3 color) {
-        perFrameLights[new Point(x, y)] = color;
+    public unsafe void AddLight(int x, int y, XnaVector3 color) {
+        perFrameLights[new Point(x, y)] = FromXnaVector3(&color);
     }
 
     public void ProcessArea(Rectangle area) {
@@ -79,13 +81,15 @@ public sealed class HikariLightingEngine : ILightingEngine {
         state = (EngineState)(((int)state + 1) % (int)EngineState.Max);
     }
 
-    public Vector3 GetColor(int x, int y) {
+    public unsafe XnaVector3 GetColor(int x, int y) {
         if (!activeProcessedArea.Contains(x, y))
-            return Vector3.Zero;
+            return XnaVector3.Zero;
 
         x -= activeProcessedArea.X;
         y -= activeProcessedArea.Y;
-        return activeLightMap[x, y];
+
+        var color = activeLightMap[x, y];
+        return ToXnaVector3(&color);
     }
 
     public void Clear() {
@@ -234,10 +238,8 @@ public sealed class HikariLightingEngine : ILightingEngine {
             if (!workingProcessedArea.Contains(position))
                 continue;
 
-            var a = color;
             var b = workingLightMap[position.X - workingProcessedArea.X, position.Y - workingProcessedArea.Y];
-            Vector3.Max(ref b, ref a, out a);
-            workingLightMap[position.X - workingProcessedArea.X, position.Y - workingProcessedArea.Y] = a;
+            workingLightMap[position.X - workingProcessedArea.X, position.Y - workingProcessedArea.Y] = Vector3.Max(color, b);
         }
 
         perFrameLights.Clear();
@@ -254,4 +256,14 @@ public sealed class HikariLightingEngine : ILightingEngine {
         var sign = diff >> 31;
         return a - (diff & sign);
     }*/
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static unsafe Vector3 FromXnaVector3(XnaVector3* value) {
+        return Unsafe.ReadUnaligned<Vector3>(value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe XnaVector3 ToXnaVector3(Vector3* value) {
+        return Unsafe.ReadUnaligned<XnaVector3>(value);
+    }
 }
