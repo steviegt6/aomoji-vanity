@@ -79,7 +79,7 @@ public sealed class HikariLightingEngine : ILightingEngine {
         state = (EngineState)(((int)state + 1) % (int)EngineState.Max);
     }
 
-    public unsafe Vector3 GetColor(int x, int y) {
+    public Vector3 GetColor(int x, int y) {
         if (!activeProcessedArea.Contains(x, y))
             return Vector3.Zero;
 

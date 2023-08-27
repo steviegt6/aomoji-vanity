@@ -23,22 +23,25 @@ public class HikariTileLightScanner : TileLightScanner {
 
     public void ExportTo(Rectangle area, HikariLightMap outputMap, TileLightScannerOptions options) {
         accessor.DrawInvisibleWalls = options.DrawInvisibleWalls;
+
+        var worldBounds = new Rectangle(1, 1, Main.maxTilesX - 1, Main.maxTilesY - 1);
+        area = Rectangle.Intersect(area, worldBounds);
         FastParallel.For(
             area.Left,
             area.Right,
             (start, end, _) => {
                 for (var x = start; x < end; ++x)
                 for (var y = area.Top; y < area.Bottom; ++y) {
-                    if (FastIsTileNullOrTouchingNull(x, y)) {
+                    /*if (FastIsTileNullOrTouchingNull(x, y)) {
                         outputMap.SetMaskAt(x, y, LightMaskMode.None);
                         outputMap[x - area.X, y - area.Y] = Vector3.Zero;
-                    }
-                    else {
-                        var tileMask = accessor.GetTileMask(Main.tile[x, y]);
-                        outputMap.SetMaskAt(x - area.X, y - area.Y, tileMask);
-                        GetTileLight(x, y, out var color);
-                        outputMap[x - area.X, y - area.Y] = color;
-                    }
+                    }*/
+                    //else {
+                    var tileMask = accessor.GetTileMask(Main.tile[x, y]);
+                    outputMap.SetMaskAt(x - area.X, y - area.Y, tileMask);
+                    GetTileLight(x, y, out var color);
+                    outputMap[x - area.X, y - area.Y] = color;
+                    //}
                 }
             }
         );
