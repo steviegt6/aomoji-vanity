@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using AomojiCommonLibs.Reflection.RuntimeAccessor;
+﻿using AomojiCommonLibs.Reflection.RuntimeAccessor;
+using Microsoft.Xna.Framework;
 using ReLogic.Threading;
 using Terraria;
 using Terraria.Graphics.Light;
@@ -21,7 +21,7 @@ public class HikariTileLightScanner : TileLightScanner {
         accessor = RuntimeAccessorGenerator.GenerateAccessor<TileLightScanner, ITileLightScannerAccessor>(this);
     }
 
-    public unsafe void ExportTo(Microsoft.Xna.Framework.Rectangle area, HikariLightMap outputMap, TileLightScannerOptions options) {
+    public void ExportTo(Rectangle area, HikariLightMap outputMap, TileLightScannerOptions options) {
         accessor.DrawInvisibleWalls = options.DrawInvisibleWalls;
         FastParallel.For(
             area.Left,
@@ -37,7 +37,7 @@ public class HikariTileLightScanner : TileLightScanner {
                         var tileMask = accessor.GetTileMask(Main.tile[x, y]);
                         outputMap.SetMaskAt(x - area.X, y - area.Y, tileMask);
                         GetTileLight(x, y, out var color);
-                        outputMap[x - area.X, y - area.Y] = HikariLightingEngine.FromXnaVector3(&color);
+                        outputMap[x - area.X, y - area.Y] = color;
                     }
                 }
             }

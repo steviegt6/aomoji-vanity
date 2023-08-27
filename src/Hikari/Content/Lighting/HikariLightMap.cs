@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using ReLogic.Threading;
 using Terraria.Graphics.Light;
 using Terraria.Utilities;
