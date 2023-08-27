@@ -1,16 +1,9 @@
-Aomoji Resource Packs API
+Hikari
 
-This mod serves as an API that allows mods to register their own resource packs to do numerous different things:
-- replace vanilla textures,
-- (optionally) mandate their texture packs are always enabled,
-- allow users to decide what texture overrides take precedence,
-- allow resource packs to replace modded resources.
+This mod overhauls the lighting engine in favor of performance.
+It should be visually identical to vanilla.
 
-This allows for functionality extremely similar to Minecraft mods, if you are at all familiar.
+Hikari uses Lucifer, meaning you need to manually select the Hikari lighting engine in the video settings.
 
-Some planned features:
-- the ability to declare custom item animations,
-- the ability to disobey texture size restrictions(?, risky, can cause hitbox issues).
-
-This API is free software licensed under the Affero GNU General Public License, version 3.0.
-Any mods that use this API must be licensed under the same license or a later version of it.
+This mod is free software licensed under the Affero GNU General Public License, version 3.0.
+Any mods that use this mod must be licensed under the same license or a later version of it.
