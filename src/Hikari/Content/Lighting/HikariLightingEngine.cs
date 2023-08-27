@@ -36,7 +36,7 @@ public sealed class HikariLightingEngine : ILightingEngine {
         workingLightMap.Clear();
     }
 
-    public unsafe void AddLight(int x, int y, Vector3 color) {
+    public void AddLight(int x, int y, Vector3 color) {
         perFrameLights[new Point(x, y)] = color;
     }
 
