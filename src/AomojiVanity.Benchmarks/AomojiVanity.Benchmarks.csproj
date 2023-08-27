@@ -3,18 +3,16 @@
     <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets" />
 
     <PropertyGroup>
-        <AssemblyName>Hikari</AssemblyName>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Lucifer\Lucifer.csproj" />
-    </ItemGroup>
+    <Target Name="BuildMod" />
 
 </Project>

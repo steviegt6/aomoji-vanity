@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hikari", "Hikari\Hikari.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucifer", "Lucifer\Lucifer.csproj", "{9ADF7538-DE92-4472-9770-0F5B329CF7EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AomojiVanity.Benchmarks", "AomojiVanity.Benchmarks\AomojiVanity.Benchmarks.csproj", "{F4341C5E-38B3-4F8D-B678-0C5601B241DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,5 +52,9 @@ Global
 		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ADF7538-DE92-4472-9770-0F5B329CF7EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4341C5E-38B3-4F8D-B678-0C5601B241DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4341C5E-38B3-4F8D-B678-0C5601B241DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4341C5E-38B3-4F8D-B678-0C5601B241DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4341C5E-38B3-4F8D-B678-0C5601B241DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
