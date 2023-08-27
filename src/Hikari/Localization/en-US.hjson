@@ -1,11 +1,1 @@
-{
-    "Mods": {
-        "Hikari": {
-            "LightingEngineProviders": {
-                "HikariLightingEngineProvider": {
-                    "DisplayName": "Hikari"
-                }
-            }
-        }
-    }
-}
+Mods.Hikari.LightingEngineProviders.HikariLightingEngineProvider.DisplayName: Hikari
