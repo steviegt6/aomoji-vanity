@@ -1,0 +1,6 @@
+RediJit
+
+This mod provides an API for requesting methods to be re-JITted. This is useful for hooking and modifying methods which may get inlined elsewhere.
+
+This API is free software licensed under the Affero GNU General Public License, version 3.0.
+Any mods that use this API must be licensed under the same license or a later version of it.

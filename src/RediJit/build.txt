@@ -1,0 +1,4 @@
+displayName = RediJit | Aomoji Method Re-JITter
+author = Tomat
+homepage = https://discord.gg/Jyqt9HYyzM
+version = 1.0.0
