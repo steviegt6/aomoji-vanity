@@ -23,8 +23,8 @@ public sealed class HikariLightingEngine : ILightingEngine {
     private readonly Dictionary<Point, Vector3> perFrameLights = new();
     private readonly HikariTileLightScanner tileScanner = new();
     private HikariLightMap activeLightMap = new();
-    private Rectangle activeProcessedArea = Rectangle.Empty;
     private HikariLightMap workingLightMap = new();
+    private Rectangle activeProcessedArea = Rectangle.Empty;
     private Rectangle workingProcessedArea = Rectangle.Empty;
     private EngineState state = EngineState.MinimapUpdate;
 
