@@ -1,0 +1,3 @@
+[submodule "src/ManagedDotnetProfiler"]
+	path = src/ManagedDotnetProfiler
+	url = https://github.com/kevingosse/ManagedDotnetProfiler.git
