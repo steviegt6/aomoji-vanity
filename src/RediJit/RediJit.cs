@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
+using Microsoft.Diagnostics.NETCore.Client;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -14,14 +15,14 @@ public class RediJit : Mod {
 
     private static string DllPath => Path.Combine(Main.SavePath, "aomoji", "profiler.dll");
 
-    private static string VersionPath => Path.Combine(Main.SavePath, "aomoji", "redijit_version.txt");
+    // private static string VersionPath => Path.Combine(Main.SavePath, "aomoji", "redijit_version.txt");
 
     public override void Load() {
         base.Load();
 
         Directory.CreateDirectory(Path.Combine(Main.SavePath, "aomoji"));
 
-        var justInstalledProfiler = false;
+        /*var justInstalledProfiler = false;
 
         if (!File.Exists(VersionPath) || !File.Exists(DllPath)) {
             InstallProfiler();
@@ -36,15 +37,14 @@ public class RediJit : Mod {
             }
         }
 
-        Logger.Debug("Just installed profiler: " + justInstalledProfiler);
+        Logger.Debug("Just installed profiler: " + justInstalledProfiler);*/
 
-        if (justInstalledProfiler || !IsProfilerPresent()) {
-            Logger.Debug("Injecting profiler into game startup...");
-            InjectProfilerIntoStartupFiles();
+        InstallProfiler();
 
-            Logger.Debug("Restarting game...");
-            RestartGame();
-        }
+        Main.QueueMainThreadAction(() => {
+            var client = new DiagnosticsClient(Environment.ProcessId);
+            client.AttachProfiler(TimeSpan.FromSeconds(10), new Guid("cf0d821e-299b-5307-a3d8-b283c03916dd"), DllPath);
+        });
 
         /*var handle = NativeLibrary.Load(DllPath);
         Logger.Debug($"Loaded DLL at {DllPath} into memory at 0x{handle:X}");*/
@@ -54,8 +54,8 @@ public class RediJit : Mod {
         if (File.Exists(DllPath))
             File.Delete(DllPath);
 
-        if (File.Exists(VersionPath))
-            File.Delete(VersionPath);
+        /*if (File.Exists(VersionPath))
+            File.Delete(VersionPath);*/
 
         var rid = GetRid();
         var dllAsmPath = string.Format(dll_path_base, rid);
@@ -71,38 +71,7 @@ public class RediJit : Mod {
         Logger.Debug($"Wrote embedded DLL to {DllPath}");
         fs.Dispose();
 
-        File.WriteAllText(VersionPath, Version.ToString());
-    }
-
-    private void InjectProfilerIntoStartupFiles() {
-        var workingDir = Directory.GetCurrentDirectory();
-    }
-
-    private void RestartGame() {
-        var scriptExt = OperatingSystem.IsWindows() ? ".bat" : ".sh";
-        var scriptName = Main.dedServ ? "start-tModLoaderServer" : "start-tModLoader";
-        if (Environment.GetEnvironmentVariable("SteamClientLaunch") == "1")
-            scriptName += "-FamilyShare";
-        scriptName += scriptExt;
-
-        if (OperatingSystem.IsWindows()) {
-            Process.Start(new ProcessStartInfo {
-                FileName = "cmd.exe",
-                Arguments = $"/c \"{scriptName}\"",
-                WorkingDirectory = Directory.GetCurrentDirectory(),
-                UseShellExecute = true,
-            });
-        }
-        else {
-            Process.Start(new ProcessStartInfo {
-                FileName = $"./{scriptName}",
-                WorkingDirectory = Directory.GetCurrentDirectory(),
-                UseShellExecute = true,
-            });
-        }
-
-        Logger.Debug("Exiting...");
-        Environment.Exit(0);
+        // File.WriteAllText(VersionPath, Version.ToString());
     }
 
     private static string GetRid() {
@@ -119,13 +88,5 @@ public class RediJit : Mod {
 
         var arch = Environment.Is64BitProcess ? "x64" : "x86";
         return $"{os}-{arch}";
-    }
-
-    private static bool IsProfilerPresent() {
-        var present = true;
-        present &= Environment.GetEnvironmentVariable("CORECLR_ENABLE_PROFILING") == "1";
-        present &= Environment.GetEnvironmentVariable("CORECLR_PROFILER") == "{846F5F1C-F9AE-4B07-969E-05C26BC060D8}";
-        present &= Environment.GetEnvironmentVariable("CORECLR_PROFILER_PATH") == DllPath; // Or check if it's not null?
-        return present;
     }
 }

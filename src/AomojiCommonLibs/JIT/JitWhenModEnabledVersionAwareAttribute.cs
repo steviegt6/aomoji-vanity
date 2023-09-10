@@ -4,6 +4,18 @@ using Terraria.ModLoader;
 
 namespace AomojiCommonLibs.JIT;
 
+[AttributeUsage(
+    AttributeTargets.Class
+  | AttributeTargets.Constructor 
+  | AttributeTargets.Delegate 
+  | AttributeTargets.Enum
+  | AttributeTargets.Event 
+  | AttributeTargets.Field
+  | AttributeTargets.Interface
+  | AttributeTargets.Method
+  | AttributeTargets.Property 
+  | AttributeTargets.Struct
+)]
 public class JitWhenModEnabledVersionAwareAttribute : MemberJitAttribute {
     public string ModName { get; }
 

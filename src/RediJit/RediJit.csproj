@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets" />
+    <Import Project="../AomojiVanity.Build/AomojiVanity.Build.targets"/>
 
     <PropertyGroup>
         <AssemblyName>RediJit</AssemblyName>
@@ -11,12 +11,45 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="native\*.dll" />
-        <EmbeddedResource Include="native\*.dll" />
+        <None Remove="native\*.dll"/>
+        <EmbeddedResource Include="native\*.dll"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.Diagnostics.NETCore.Client">
+            <HintPath>lib\Microsoft.Diagnostics.NETCore.Client.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Diagnostics.Runtime">
+            <HintPath>lib\Microsoft.Diagnostics.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.DependencyInjection">
+            <HintPath>lib\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+            <HintPath>lib\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Logging">
+            <HintPath>lib\Microsoft.Extensions.Logging.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+            <HintPath>lib\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Options">
+            <HintPath>lib\Microsoft.Extensions.Options.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Primitives">
+            <HintPath>lib\Microsoft.Extensions.Primitives.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Collections.Immutable">
+            <HintPath>lib\System.Collections.Immutable.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.CompilerServices.Unsafe">
+            <HintPath>lib\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
 displayName = Aomoji Common API
 author = Tomat
 homepage = https://discord.gg/Jyqt9HYyzM
-version = 1.3.1
+version = 1.4.0

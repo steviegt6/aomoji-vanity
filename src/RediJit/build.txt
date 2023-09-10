@@ -2,3 +2,4 @@ displayName = RediJit | Aomoji Method Re-JITter
 author = Tomat
 homepage = https://discord.gg/Jyqt9HYyzM
 version = 1.0.0
+dllReferences=Microsoft.Diagnostics.NETCore.Client,Microsoft.Diagnostics.Runtime,Microsoft.Extensions.DependencyInjection.Abstractions,Microsoft.Extensions.DependencyInjection,Microsoft.Extensions.Logging.Abstractions,Microsoft.Extensions.Logging,Microsoft.Extensions.Options,Microsoft.Extensions.Primitives,System.Collections.Immutable,System.Runtime.CompilerServices.Unsafe
